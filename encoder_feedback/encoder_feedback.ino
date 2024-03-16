@@ -1,13 +1,22 @@
-const int aPin = 2; // interrupt pin
-const int bPin = 3; // interrupt pin
-const int aiPin = 4;
-const int CPR = 500;
+// Define Pins
+#define aPin 2 // interrupt pin
+#define bPin 3 // interrupt pin
+#define invAPin 4
+#define invBPin 5
 
-volatile long encoderCount = 0;
-volatile float position = 0;
+// Encoder Properties
+const int CPR = 500; // counts per revolution
+const int freq = 100; // hertz
 
+// State Variables
+bool aState = 1;
 bool bState = 1;
-bool aiState = 1;
+bool invAState = 1;
+bool invBState = 1;
+
+// Relevant Outputs
+static int encoderCount = 0;
+static float position = 0;
 
 void setup() {
   // Begin serial monitors
@@ -16,25 +25,69 @@ void setup() {
   // Initialize pin mode
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
-  pinMode(aiState, INPUT);
-
-  // Initialize interrupt pins
-  attachInterrupt(digitalPinToInterrupt(aPin), encoderPulse, RISING);
+  pinMode(invAPin, INPUT);
+  pinMode(invBPin, INPUT);
+  
+  /*
+    aPin Rising = 1x Resolution
+    aPin Change = 2x Resolution
+    aPin and bPin Change = 4x Resolution
+  */
+  attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulse, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulse, CHANGE);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  // Calculate shaft position
+  position = encoderCount * (360. / (CPR * 4));
+  Serial.println(position);
+  delay(freq);
 }
 
-void encoderPulse() {
-  // Read AI and B state
-  aiState = digitalRead(aiPin);
+void encoderAPulse() {
+  // Read channels
+  aState = digitalRead(aPin);
   bState = digitalRead(bPin);
+  invAState = digitalRead(invAPin);
+  invBState = digitalRead(invBPin);
 
-  // Determine direction based on B state
-  if (aiState == false){
-    if (bState == false){
+  // Reconstruct signal to reduce noise
+  bool reconstructedA = aState && !invAState;
+  bool reconstructedB = bState && !invBState;
+
+  // Determine direction based on A and B state
+  if (reconstructedA){
+    if (reconstructedB){
+      encoderCount--;
+    }
+    else {
+      encoderCount++;
+    }
+  }
+  else {
+    if (reconstructedB){
+      encoderCount++;
+    }
+    else {
+      encoderCount--;
+    }
+  }
+}
+
+void encoderBPulse() {
+  // Read channels
+  aState = digitalRead(aPin);
+  bState = digitalRead(bPin);
+  invAState = digitalRead(invAPin);
+  invBState = digitalRead(invBPin);
+
+  // Reconstruct signal to reduce noise
+  bool reconstructedA = aState && !invAState;
+  bool reconstructedB = bState && !invBState;
+
+  // Determine direction based on A and B state
+  if (reconstructedB){
+    if (reconstructedA){
       encoderCount++;
     }
     else {
@@ -42,14 +95,11 @@ void encoderPulse() {
     }
   }
   else {
-    if (bState == true){
-      encoderCount++;
-    }
-    else {
+    if (reconstructedA){
       encoderCount--;
     }
+    else {
+      encoderCount++;
+    }
   }
-  // Calculate shaft position
-  position = encoderCount * (360. / CPR);
-  Serial.println(position);
 }
