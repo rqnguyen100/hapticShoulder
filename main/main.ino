@@ -47,13 +47,12 @@ void loop() {
     analogWrite PWM = [0, 255]
   */
 
-  // Calculate shaft position
-  position = encoderCount * (360. / (CPR * 4));
+  // Prepare motor
+  digitalWrite(m2Pin, LOW);
 
-  // Position Control
+  // Position Control CCW
   while (position < 90){
     // Move motor CCW
-    digitalWrite(m2Pin, LOW);
     analogWrite(m1Pin, 20);
 
     // Calculate shaft position
@@ -61,18 +60,22 @@ void loop() {
     Serial.println(position);
   }
 
+  // Pause
+  digitalWrite(m1Pin, LOW);
   delay(2000);
 
+  // Position Control CW
   while (position > -90){
     // Move motor CW
-    digitalWrite(m1Pin, LOW);
-    analogWrite(m2Pin, 10);
+    analogWrite(m2Pin, 20);
 
     // Calculate shaft position
     position = encoderCount * (360. / (CPR * 4));
     Serial.println(position);
   }
 
+  // Pause
+  digitalWrite(m2Pin, LOW);
   delay(2000);
 }
 
@@ -84,18 +87,18 @@ void encoderAPulse() {
   // Determine direction based on A and B state
   if (aState){
     if (bState){
-      encoderCount--;
+      encoderCount++;
     }
     else {
-      encoderCount++;
+      encoderCount--;
     }
   }
   else {
     if (bState){
-      encoderCount++;
+      encoderCount--;
     }
     else {
-      encoderCount--;
+      encoderCount++;
     }
   }
 }
@@ -108,18 +111,18 @@ void encoderBPulse() {
   // Determine direction based on A and B state
   if (bState){
     if (aState){
-      encoderCount++;
+      encoderCount--;
     }
     else {
-      encoderCount--;
+      encoderCount++;
     }
   }
   else {
     if (aState){
-      encoderCount--;
+      encoderCount++;
     }
     else {
-      encoderCount++;
+      encoderCount--;
     }
   }
 }
