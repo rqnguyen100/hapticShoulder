@@ -1,7 +1,7 @@
 // Basic sketch for trying out the Adafruit DRV8871 Breakout
 
-#define MOTOR_IN1 5
-#define MOTOR_IN2 6
+#define MOTOR_IN1 10
+#define MOTOR_IN2 11
 
 void setup() {
   Serial.begin(9600);
