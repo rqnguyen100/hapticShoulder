@@ -41,8 +41,8 @@ void loop() {
   /* MOTOR INPUTS
     M1 HIGH & M2 LOW = CCW
     M1 LOW & M2 HIGH = CW
-    M1 LOW & M2 Low = Brake *(coasted at 9V)
-    M1 HIGH & M2 HIGH = Coast *(coasted at 9V)
+    M1 LOW & M2 Low = Coast
+    M1 HIGH & M2 HIGH = Brake *(coasted at 9V)
 
     analogWrite PWM = [0, 255]
   */
