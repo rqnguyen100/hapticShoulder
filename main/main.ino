@@ -29,9 +29,9 @@ void setup() {
   pinMode(bPin, INPUT);
   
   /*
-    aPin Rising = 1x Resolution
-    aPin Change = 2x Resolution
-    aPin and bPin Change = 4x Resolution
+    aPin Rising = 1x Resolution (B does not have to be connected to interrupt pin)
+    aPin Change = 2x Resolution (B does not have to be connected to interrupt pin)
+    aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
   */
   attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulse, CHANGE);
   attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulse, CHANGE);
