@@ -10,6 +10,9 @@ void setup() {
 
   // Initialize
   myMotor.encoderPinInit();
+  myDisplay.displayInit();
+
+  Serial.println("Hello");
 }
 
 void loop() {

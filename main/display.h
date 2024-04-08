@@ -10,11 +10,8 @@ class display{
   public:
       display();
 
+      void displayInit();
       void displayWrite(float);
-
-  private:
-    Adafruit_SSD1306 oled;
-
 };
 
 #endif
