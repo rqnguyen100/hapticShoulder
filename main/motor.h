@@ -1,38 +1,35 @@
 #ifndef _MOTOR_H // header guard
 #define _MOTOR_H
 
-class motor{
+#include <Arduino.h>
 
-    public:
-        /*Variables*/
-        static int encoderCount;
-        float position = 0;
+class motor {
+public:
+    /*Attributes*/
+    int aPin;
+    int bPin;
+    volatile bool aState;
+    volatile bool bState;
+    volatile double encoderCount;
+    double position;
 
-        static bool aState;
-        static bool bState;
+public:
+    /*Functions*/
+    motor(int aPin, int bPin, bool aState, bool bState, double encoderCount, double position);
 
-    public:
-        /*Functions*/
-        motor();
+    void encoderPinInit();
 
-        void motorPinInit();
-        void encoderPinInit();
+    void calcPosition();
 
-        static void encoderAPulse();
-        static void encoderBPulse();
+private:
+    /*Encoder Specs*/
+    const int CPR = 500; // counts per revolution
 
-        void calcPosition();
+    // Static member function for ISR
+    static void encoderAPulseISR();
 
-    private:
-        /*Motor pins*/
-
-        /*Encoder pins*/ 
-        #define ENCODER_A_PIN 2 
-        #define ENCODER_B_PIN 3
-
-        /*Encoder Specs*/
-        const int CPR = 500; // counts per revolution
-        const int freq = 100; // hertz
+    // Static member function for handling A pulse
+    static void encoderAPulse(motor* instance);
 };
 
 #endif
