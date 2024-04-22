@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int aPin, int bPin, bool aState, bool bState, double encoderCount, double position)
-    : aPin(aPin), bPin(bPin), aState(aState), bState(bState), encoderCount(encoderCount), position(position) {
+motor::motor(int aPin, int bPin)
+    : aPin(aPin), bPin(bPin) {
 }
 
 motor* motor::instances[2] = {NULL, NULL};

@@ -1,7 +1,7 @@
 #include "motor.h"
 
-motor motor1(2, 4, 0, 0, 0, 0);
-motor motor2(3, 5, 0, 0, 0, 0);
+motor motor1(2, 4);
+motor motor2(3, 5);
 
 void setup() {
     // Begin serial monitors

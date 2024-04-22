@@ -20,7 +20,7 @@ public:
 
 public:
     /*Functions*/
-    motor(int aPin, int bPin, bool aState, bool bState, double encoderCount, double position);
+    motor(int aPin, int bPin);
 
     void begin(const byte aPin, const byte bPin);
 
@@ -31,6 +31,12 @@ public:
 private:
     /*Encoder Specs*/
     const int CPR = 500; // counts per revolution
+
+    /*
+      aPin Rising = 1x Resolution (B does not have to be connected to interrupt pin)
+      aPin Change = 2x Resolution (B does not have to be connected to interrupt pin)
+      aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
+    */
     const int resolution = 2; // dependent on number of interrupt pins used
 };
 
