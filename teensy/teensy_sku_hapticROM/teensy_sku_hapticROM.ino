@@ -14,7 +14,8 @@ bool bState = 1;
 // Position Data
 static int encoderCount = 0;
 static float angle_deg = 0;
-float upper_limit = 90;
+float lower_limit = -60;
+float upper_limit = 60;
 
 // Kinematics variables
 double rh = 0.05;      // [meters] length of lever arm
@@ -82,62 +83,66 @@ void loop() {
     
   // Calculate shaft angle
   angle_deg = encoderCount * (360. / (CPR * 4));
-  if (angle_deg < upper_limit){
+  if (angle_deg < upper_limit) && (angle_deg > lower_limit) {
     angle_deg = encoderCount * (360. / (CPR * 4));
   }
-  else{
-    xh = rh*(angle_deg - upper_limit)*(3.14/180);
-
-    // Compute handle velocity
-    vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
-    lastXh = xh;
-    lastLastVh = lastVh;
-    lastVh = vh;
-
-    // Render a virtual spring
-    force = -k_spring*xh; // Resistive spring force
-  
-    // Render a damper
-    forceD = -b_damper*vh;
-
-    // Introduce integral term
-    int_term += -k_spring*lastXh;
-    forceI = ki * int_term;
-
-    // Zero integral near origin
-    if ((angle_deg - upper_limit) < 0.5){
-      forceI = 0;
-    }
-    else if ((angle_deg - upper_limit) > -0.5){
-      forceI = 0;
-    }
-
-    // Calculate motor torque needed to produce desired resistive force 
-    Tm = rh*(force - forceD + forceI);  
-
-    // Compute the duty cycle required to generate Tp (torque at the motor pulley)
-    duty = sqrt(abs(Tm)/0.03);
-  
-    // Make sure the duty cycle is between 0 and 100%
-    if (duty > 1) {            
-      duty = 1;
-    } 
-    else if (duty < 0) { 
-     duty = 0;
-    }   
-
-    output = (int)(duty*100);   // convert duty cycle to output signal
-
-    // Check direction to oppose force
-    if(force < 0) { 
-      digitalWrite(M1, HIGH);
-      analogWrite(E1, output);
-    } 
-    else {
-      digitalWrite(M1, LOW);
-      analogWrite(E1, output);
-    }
+  else if (angle_deg < lower_limit){
+    xh = rh*(angle_deg - lower_limit)*(3.14/180);
   }
+  else if (angle_deg > upper_limit){
+    xh = rh*(angle_deg - upper_limit)*(3.14/180);
+  }
+  
+  // Compute handle velocity
+  vh = -(.95*.95)*lastLastVh + 2*.95*lastVh + (1-.95)*(1-.95)*(xh-lastXh)/.0001;  // filtered velocity (2nd-order filter)
+  lastXh = xh;
+  lastLastVh = lastVh;
+  lastVh = vh;
+
+  // Render a virtual spring
+  force = -k_spring*xh; // Resistive spring force
+
+  // Render a damper
+  forceD = -b_damper*vh;
+
+  // Introduce integral term
+  int_term += -k_spring*lastXh;
+  forceI = ki * int_term;
+
+  // Zero integral near origin
+  if ((angle_deg - upper_limit) < 0.5){
+    forceI = 0;
+  }
+  else if ((angle_deg - upper_limit) > -0.5){
+    forceI = 0;
+  }
+
+  // Calculate motor torque needed to produce desired resistive force 
+  Tm = rh*(force - forceD + forceI);  
+
+  // Compute the duty cycle required to generate Tp (torque at the motor pulley)
+  duty = sqrt(abs(Tm)/0.03);
+
+  // Make sure the duty cycle is between 0 and 100%
+  if (duty > 1) {            
+    duty = 1;
+  } 
+  else if (duty < 0) { 
+    duty = 0;
+  }   
+
+  output = (int)(duty*100);   // convert duty cycle to output signal
+
+  // Check direction to oppose force
+  if(force < 0) { 
+    digitalWrite(M1, HIGH);
+    analogWrite(E1, output);
+  } 
+  else {
+    digitalWrite(M1, LOW);
+    analogWrite(E1, output);
+  }
+  
 }
 
 void encoderAPulse() {
