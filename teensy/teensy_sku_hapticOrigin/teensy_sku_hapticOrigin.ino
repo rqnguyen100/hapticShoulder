@@ -121,7 +121,7 @@ void loop() {
     duty = 0;
   }   
 
-  output = (int)(duty*100);   // convert duty cycle to output signal
+  output = (int)(duty*255);   // convert duty cycle to output signal
 
   // Check direction to oppose force
   if(force < 0) { 

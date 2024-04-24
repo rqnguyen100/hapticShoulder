@@ -83,7 +83,7 @@ void loop() {
     
   // Calculate shaft angle
   angle_deg = encoderCount * (360. / (CPR * 4));
-  if (angle_deg < upper_limit) && (angle_deg > lower_limit) {
+  if ((angle_deg < upper_limit) && (angle_deg > lower_limit)) {
     angle_deg = encoderCount * (360. / (CPR * 4));
   }
   else if (angle_deg < lower_limit){
@@ -131,7 +131,7 @@ void loop() {
     duty = 0;
   }   
 
-  output = (int)(duty*100);   // convert duty cycle to output signal
+  output = (int)(duty*150);   // convert duty cycle to output signal
 
   // Check direction to oppose force
   if(force < 0) { 
