@@ -2,11 +2,11 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int aPin, int bPin, int pwmPin, int dirPin, int kSpring, int bDamper)
+motor::motor(int aPin, int bPin, int pwmPin, int dirPin, int kSpring = 10, int bDamper = 0.35)
     : aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), kSpring(kSpring), bDamper(bDamper) {
 }
 
-motor* motor::instances[2] = {NULL, NULL};
+motor* motor::instances[3] = {NULL, NULL, NULL};
 
 void motor::encoderAPulseExt0(){
   if (motor::instances[0] != NULL){
@@ -20,6 +20,12 @@ void motor::encoderAPulseExt1(){
   }
 } 
 
+void motor::encoderAPulseExt2(){
+  if (motor::instances[2] != NULL){
+    motor::instances[2]->encoderAPulse();
+  }
+} 
+
 void motor::encoderBPulseExt0(){
   if (motor::instances[0] != NULL){
     motor::instances[0]->encoderBPulse();
@@ -29,6 +35,12 @@ void motor::encoderBPulseExt0(){
 void motor::encoderBPulseExt1(){
   if (motor::instances[1] != NULL){
     motor::instances[1]->encoderBPulse();
+  }
+} 
+
+void motor::encoderBPulseExt2(){
+  if (motor::instances[2] != NULL){
+    motor::instances[2]->encoderBPulse();
   }
 } 
 
@@ -55,6 +67,12 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
       attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
       instances[1] = this;
+      break;
+
+    case 20:
+      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
+      instances[2] = this;
       break;
   }
 } 
@@ -114,8 +132,15 @@ void motor::encoderBPulse(){
 /* ====================================================================== */
 
 void motor::calcTorqueOutput(){
-  // Calculate shaft angle
+  // Calculate position
   motor::position = motor::encoderCount * (360. / (CPR * 4));
+
+  // Break function if motor has not moved (save computational time)
+  if (motor::position < 0.5 && motor::position > -0.5){
+    return;
+  }
+
+  // Calculate handle position
   motor::xh = rh*motor::position*(3.14/180);
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
@@ -144,15 +169,15 @@ void motor::calcTorqueOutput(){
     motor::duty = 0;
   }   
 
-  motor::torqueOutput = (int)(motor::duty*50);   // convert duty cycle to output signal
+  motor::torqueOutput = (int)(motor::duty*150);   // convert duty cycle to output signal
 
   // Check direction to oppose force
   if(motor::forceP < 0) { 
     digitalWrite(motor::dirPin, HIGH);
-    analogWrite(motor::pwmPin, torqueOutput);
+    analogWrite(motor::pwmPin, motor::torqueOutput);
   } 
   else {
     digitalWrite(motor::dirPin, LOW);
-    analogWrite(motor::pwmPin, torqueOutput);
+    analogWrite(motor::pwmPin, motor::torqueOutput);
   }
 }
