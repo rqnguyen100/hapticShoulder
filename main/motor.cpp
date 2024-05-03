@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int aPin, int bPin, int pwmPin, int dirPin, int kSpring = 10, int bDamper = 0.35)
-    : aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), kSpring(kSpring), bDamper(bDamper) {
+motor::motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
+    : motorID(motorID), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
 motor* motor::instances[3] = {NULL, NULL, NULL};
@@ -130,18 +130,42 @@ void motor::encoderBPulse(){
 }
 
 /* ====================================================================== */
+bool motor::coupleBool = 0;
 
 void motor::calcTorqueOutput(){
-  // Calculate position
-  motor::position = motor::encoderCount * (360. / (CPR * 4));
+  // initialize limits
+  int upperLimit = motor::upperLim;
+  int lowerLimit = motor::lowerLim;
 
-  // Break function if motor has not moved (save computational time)
-  if (motor::position < 0.5 && motor::position > -0.5){
-    return;
+  // check for coupling
+  if (motor::motorID == 1 && abs(motor::position) > 10){
+    motor::coupleBool = 1;
+  }
+  else if (motor::motorID == 1){
+    motor::coupleBool = 0;
   }
 
-  // Calculate handle position
-  motor::xh = rh*motor::position*(3.14/180);
+  // perform coupling on motor 2
+  if (motor::motorID == 2 && motor::coupleBool){
+    upperLimit = 90;
+    lowerLimit = -90;
+  }
+  else if (motor::motorID == 2){
+    upperLimit = 30;
+    lowerLimit = -30;
+  }
+
+  // calculate handle position
+  if (motor::position < lowerLimit){
+    motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
+  }
+  else if (motor::position > upperLimit){
+    motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
+  }
+  else{
+    motor::position = motor::encoderCount * (360. / (CPR * 4));
+    return; // break function if in free ROM to save computational time
+  }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
   motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 

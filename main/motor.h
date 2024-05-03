@@ -5,6 +5,9 @@
 
 class motor {
 public:
+    /*Motor ID*/
+    const int motorID;
+    
     /*Attributes Relating to Encoder*/
     const int aPin;
     const int bPin;
@@ -20,6 +23,8 @@ public:
     /*Attributes Relating to Haptics*/
     const int kSpring;
     const int bDamper;
+    const int upperLim;
+    const int lowerLim;
 
     /*Kinematic Variables*/
     const double rh = 0.05;          // [meters] length of lever arm
@@ -36,6 +41,9 @@ public:
     volatile double duty = 0;
     volatile double torqueOutput = 0;
 
+    /*Coupling Variables*/
+    static bool coupleBool;
+
     /*Instance Handler*/
     static motor * instances [3];
     static void encoderAPulseExt0();
@@ -47,7 +55,7 @@ public:
 
 public:
     /*Functions*/
-    motor(int aPin, int bPin, int pwmPin, int dirPin, int kSpring = 10, int bDamper = 0.35);
+    motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
     void begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin);
 
