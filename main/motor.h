@@ -45,13 +45,13 @@ public:
     static bool coupleBool;
 
     /*Instance Handler*/
-    static motor * instances [3];
+    static motor * instances [1];
     static void encoderAPulseExt0();
-    static void encoderAPulseExt1();
-    static void encoderAPulseExt2();
+    // static void encoderAPulseExt1();
+    // static void encoderAPulseExt2();
     static void encoderBPulseExt0();
-    static void encoderBPulseExt1();
-    static void encoderBPulseExt2();
+    // static void encoderBPulseExt1();
+    // static void encoderBPulseExt2();
 
 public:
     /*Functions*/

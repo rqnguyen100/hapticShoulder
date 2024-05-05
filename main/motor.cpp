@@ -6,7 +6,7 @@ motor::motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperL
     : motorID(motorID), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
-motor* motor::instances[3] = {NULL, NULL, NULL};
+motor* motor::instances[1] = {NULL};
 
 void motor::encoderAPulseExt0(){
   if (motor::instances[0] != NULL){
@@ -14,17 +14,17 @@ void motor::encoderAPulseExt0(){
   }
 }
 
-void motor::encoderAPulseExt1(){
-  if (motor::instances[1] != NULL){
-    motor::instances[1]->encoderAPulse();
-  }
-} 
+// void motor::encoderAPulseExt1(){
+//   if (motor::instances[1] != NULL){
+//     motor::instances[1]->encoderAPulse();
+//   }
+// } 
 
-void motor::encoderAPulseExt2(){
-  if (motor::instances[2] != NULL){
-    motor::instances[2]->encoderAPulse();
-  }
-} 
+// void motor::encoderAPulseExt2(){
+//   if (motor::instances[2] != NULL){
+//     motor::instances[2]->encoderAPulse();
+//   }
+// } 
 
 void motor::encoderBPulseExt0(){
   if (motor::instances[0] != NULL){
@@ -32,17 +32,17 @@ void motor::encoderBPulseExt0(){
   }
 }
 
-void motor::encoderBPulseExt1(){
-  if (motor::instances[1] != NULL){
-    motor::instances[1]->encoderBPulse();
-  }
-} 
+// void motor::encoderBPulseExt1(){
+//   if (motor::instances[1] != NULL){
+//     motor::instances[1]->encoderBPulse();
+//   }
+// } 
 
-void motor::encoderBPulseExt2(){
-  if (motor::instances[2] != NULL){
-    motor::instances[2]->encoderBPulse();
-  }
-} 
+// void motor::encoderBPulseExt2(){
+//   if (motor::instances[2] != NULL){
+//     motor::instances[2]->encoderBPulse();
+//   }
+// } 
 
 void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
@@ -56,25 +56,30 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
     aPin Change = 2x Resolution (B does not have to be connected to interrupt pin)
     aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
   */
-  switch (aPin){
-    case 2: 
-      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
-      instances[0] = this;
-      break;
-        
-    case 19: 
-      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
-      instances[1] = this;
-      break;
+  
+  attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+  instances[0] = this;
 
-    case 20:
-      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
-      instances[2] = this;
-      break;
-  }
+  // switch (aPin){
+  //   case 2: 
+  //     attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
+  //     attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+  //     instances[0] = this;
+  //     break;
+        
+  //   case 19: 
+  //     attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
+  //     attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
+  //     instances[1] = this;
+  //     break;
+
+  //   case 20:
+  //     attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
+  //     attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
+  //     instances[2] = this;
+  //     break;
+  // }
 } 
 
 void motor::calcPosition() {
@@ -137,23 +142,23 @@ void motor::calcTorqueOutput(){
   int upperLimit = motor::upperLim;
   int lowerLimit = motor::lowerLim;
 
-  // check for coupling
-  if (motor::motorID == 1 && abs(motor::position) > 10){
-    motor::coupleBool = 1;
-  }
-  else if (motor::motorID == 1){
-    motor::coupleBool = 0;
-  }
+  // // check for coupling
+  // if (motor::motorID == 1 && abs(motor::position) > 10){
+  //   motor::coupleBool = 1;
+  // }
+  // else if (motor::motorID == 1){
+  //   motor::coupleBool = 0;
+  // }
 
-  // perform coupling on motor 2
-  if (motor::motorID == 2 && motor::coupleBool){
-    upperLimit = 90;
-    lowerLimit = -90;
-  }
-  else if (motor::motorID == 2){
-    upperLimit = 30;
-    lowerLimit = -30;
-  }
+  // // perform coupling on motor 2
+  // if (motor::motorID == 2 && motor::coupleBool){
+  //   upperLimit = 90;
+  //   lowerLimit = -90;
+  // }
+  // else if (motor::motorID == 2){
+  //   upperLimit = 30;
+  //   lowerLimit = -30;
+  // }
 
   // calculate handle position
   if (motor::position < lowerLimit){
