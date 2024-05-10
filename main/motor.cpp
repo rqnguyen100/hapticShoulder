@@ -44,12 +44,12 @@ void motor::encoderBPulseExt0(){
 //   }
 // } 
 
-void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin){
+void motor::begin(const byte aPin, const byte bPin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
 
-  pinMode(pwmPin, OUTPUT);
-  pinMode(dirPin, OUTPUT);
+  // pinMode(pwmPin, OUTPUT);
+  // pinMode(dirPin, OUTPUT);
 
   /*
     aPin Rising = 1x Resolution (B does not have to be connected to interrupt pin)

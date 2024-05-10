@@ -1,4 +1,5 @@
 #include "motor.h"
+#include <Wire.h>
 
 /*
   intialize motor class with inputs
@@ -20,6 +21,7 @@ motor motor1(1, 2, 3, 10, 9, 90, -90, 5);
 void setup() {
     // Begin serial monitor
     Serial.begin(9600);
+    Wire.begin();
 
     // Change PWM pin frequency to 20kHz
     // TCCR1B &= ~7;
@@ -30,7 +32,7 @@ void setup() {
     // TCCR4B |= 1;
 
     // Initialize
-    motor1.begin(motor1.aPin, motor1.bPin, motor1.pwmPin, motor1.dirPin);
+    motor1.begin(motor1.aPin, motor1.bPin);
     // motor2.begin(motor2.aPin, motor2.bPin, motor2.pwmPin, motor2.dirPin);
     // motor3.begin(motor3.aPin, motor3.bPin, motor3.pwmPin, motor3.dirPin);
 }
@@ -41,6 +43,11 @@ void loop() {
     // motor2.calcPosition();
     // motor3.calcPosition();
 
-    motor1.calcTorqueOutput();
+    // motor1.calcTorqueOutput();
     // motor2.calcTorqueOutput();
+
+    Wire.beginTransmission(9);
+    Wire.write(motor1.position);
+    Wire.endTransmission
+
 }

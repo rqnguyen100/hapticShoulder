@@ -57,7 +57,7 @@ public:
     /*Functions*/
     motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
-    void begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin);
+    void begin(const byte aPin, const byte bPin);
 
     void encoderAPulse();
     void encoderBPulse();
