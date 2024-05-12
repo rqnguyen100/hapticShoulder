@@ -7,6 +7,7 @@ class motor {
 public:
     /*Motor ID*/
     const int motorID;
+    const float gearRatio;
     
     /*Attributes Relating to Encoder*/
     const int aPin;
@@ -55,7 +56,7 @@ public:
 
 public:
     /*Functions*/
-    motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
+    motor(int motorID, float gearRatio, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
     void begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin);
 
@@ -67,14 +68,14 @@ public:
 
 private:
     /*Encoder Specs*/
-    const int CPR = 500; // counts per revolution
+    const float CPR = 500; // counts per revolution
 
     /*
       aPin Rising = 1x Resolution (B does not have to be connected to interrupt pin)
       aPin Change = 2x Resolution (B does not have to be connected to interrupt pin)
       aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
     */
-    const int resolution = 4; // dependent on number of interrupt pins used
+    const float resolution = 4; // dependent on number of interrupt pins used
 };
 
 #endif
