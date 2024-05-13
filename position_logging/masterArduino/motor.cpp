@@ -6,7 +6,7 @@ motor::motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperL
     : motorID(motorID), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
-motor* motor::instances[1] = {NULL};
+motor* motor::instances[3] = {NULL,NULL,NULL};
 
 void motor::encoderAPulseExt0(){
   if (motor::instances[0] != NULL){
@@ -14,17 +14,17 @@ void motor::encoderAPulseExt0(){
   }
 }
 
-// void motor::encoderAPulseExt1(){
-//   if (motor::instances[1] != NULL){
-//     motor::instances[1]->encoderAPulse();
-//   }
-// } 
+void motor::encoderAPulseExt1(){
+  if (motor::instances[1] != NULL){
+    motor::instances[1]->encoderAPulse();
+  }
+} 
 
-// void motor::encoderAPulseExt2(){
-//   if (motor::instances[2] != NULL){
-//     motor::instances[2]->encoderAPulse();
-//   }
-// } 
+void motor::encoderAPulseExt2(){
+  if (motor::instances[2] != NULL){
+    motor::instances[2]->encoderAPulse();
+  }
+} 
 
 void motor::encoderBPulseExt0(){
   if (motor::instances[0] != NULL){
@@ -32,17 +32,17 @@ void motor::encoderBPulseExt0(){
   }
 }
 
-// void motor::encoderBPulseExt1(){
-//   if (motor::instances[1] != NULL){
-//     motor::instances[1]->encoderBPulse();
-//   }
-// } 
+void motor::encoderBPulseExt1(){
+  if (motor::instances[1] != NULL){
+    motor::instances[1]->encoderBPulse();
+  }
+} 
 
-// void motor::encoderBPulseExt2(){
-//   if (motor::instances[2] != NULL){
-//     motor::instances[2]->encoderBPulse();
-//   }
-// } 
+void motor::encoderBPulseExt2(){
+  if (motor::instances[2] != NULL){
+    motor::instances[2]->encoderBPulse();
+  }
+} 
 
 void motor::begin(const byte aPin, const byte bPin){
   pinMode(aPin, INPUT);
@@ -59,27 +59,27 @@ void motor::begin(const byte aPin, const byte bPin){
   
   attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
   attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
-  instances[0] = this;
+  // instances[0] = this;
 
-  // switch (aPin){
-  //   case 2: 
-  //     attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
-  //     attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
-  //     instances[0] = this;
-  //     break;
+  switch (aPin){
+    case 2: 
+      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+      instances[0] = this;
+      break;
         
-  //   case 19: 
-  //     attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
-  //     attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
-  //     instances[1] = this;
-  //     break;
+    case 19: 
+      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
+      instances[1] = this;
+      break;
 
-  //   case 20:
-  //     attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
-  //     attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
-  //     instances[2] = this;
-  //     break;
-  // }
+    case 20:
+      attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
+      instances[2] = this;
+      break;
+  }
 } 
 
 void motor::calcPosition() {

@@ -3,7 +3,9 @@
 
 const int SLAVE_ADDRESS = 9;
 volatile boolean haveData = false;
-volatile double data;
+volatile double motor1_pos; 
+volatile double motor2_pos; 
+volatile double motor3_pos;
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,17 +18,25 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (haveData){
     Serial.print("Motor 1: ");
-    Serial.print(", ");
-    Serial.println(data);
+    Serial.print(motor1_pos);
+    // Serial.print(" || ");
+    // Serial.print("Motor 2: ");
+    // Serial.print(motor2_pos);
+    // Serial.print(" || ");
+    // Serial.print("Motor 3: ");
+    // Serial.println(motor3_pos);
+    
     haveData = false;
   }
 }
 
 void receiveEvent (int howMany)
  {
- if (howMany >= (sizeof data))
+ if (howMany >= (sizeof motor1_pos))
    {
-   I2C_readAnything (data);
+   I2C_readAnything(motor1_pos);
+  //  I2C_readAnything(motor2_pos);
+  //  I2C_readAnything(motor3_pos);
    haveData = true;
    }  // end if have enough data
  }  // end of receiveEvent
