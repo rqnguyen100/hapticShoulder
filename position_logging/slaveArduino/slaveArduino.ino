@@ -1,5 +1,5 @@
 #include <Wire.h>
-#include <I2C_Anything.h>
+#include "I2C_Anything.h"
 
 const int SLAVE_ADDRESS = 9;
 volatile boolean haveData = false;
@@ -15,7 +15,8 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   if (haveData){
-    Serial.print("Received motor 1 position: ");
+    Serial.print("Motor 1: ");
+    Serial.print(", ");
     Serial.println(data);
     haveData = false;
   }

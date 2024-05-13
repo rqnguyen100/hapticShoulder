@@ -1,6 +1,6 @@
 #include "motor.h"
 #include <Wire.h>
-#include <I2C_Anything.h>
+#include "I2C_Anything.h"
 
 /*
   intialize motor class with inputs
@@ -52,6 +52,5 @@ void loop() {
     Wire.beginTransmission(SLAVE_ADDRESS);
     I2C_writeAnything(data);
     Wire.endTransmission();
-    delay(200);
 
 }
