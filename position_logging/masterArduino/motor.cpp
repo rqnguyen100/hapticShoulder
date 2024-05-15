@@ -6,7 +6,7 @@ motor::motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperL
     : motorID(motorID), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
-motor* motor::instances[3] = {NULL,NULL,NULL};
+motor* motor::instances[2] = {NULL,NULL};
 
 void motor::encoderAPulseExt0(){
   if (motor::instances[0] != NULL){
@@ -57,8 +57,8 @@ void motor::begin(const byte aPin, const byte bPin){
     aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
   */
   
-  attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
   // instances[0] = this;
 
   switch (aPin){
