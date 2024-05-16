@@ -5,7 +5,7 @@ const int SLAVE_ADDRESS = 9;
 volatile boolean haveData = false;
 volatile double motor1_pos; 
 volatile double motor2_pos; 
-// volatile double motor3_pos;
+volatile double motor3_pos;
 
 unsigned long timestamp;
 
@@ -19,6 +19,8 @@ void setup() {
   Serial.print(", ");
   Serial.print("Motor 2");
   Serial.print(", ");
+  Serial.print("Motor 3");
+  Serial.print(", ");
   Serial.println("Timestamp");
 }
 
@@ -29,10 +31,8 @@ void loop() {
     Serial.print(", ");
     Serial.print(motor2_pos);
     Serial.print(", ");
-    // Serial.print(" || ");
-    // Serial.print("Motor 3: ");
-    // Serial.println(motor3_pos);
-    
+    Serial.print(motor3_pos);
+    Serial.print(", ");
     Serial.println(timestamp);
 
     haveData = false;
@@ -41,11 +41,11 @@ void loop() {
 
 void receiveEvent (int howMany)
  {
- if (howMany >= (sizeof motor1_pos) + (sizeof motor2_pos))
+ if (howMany >= (sizeof motor1_pos) + (sizeof motor2_pos) + (sizeof motor3_pos) + (sizeof timestamp))
    {
    I2C_readAnything(motor1_pos);
    I2C_readAnything(motor2_pos);
-  //  I2C_readAnything(motor3_pos);
+   I2C_readAnything(motor3_pos);
    I2C_readAnything(timestamp);
    haveData = true;
    }  // end if have enough data

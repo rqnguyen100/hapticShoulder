@@ -10,13 +10,22 @@ template <typename T> unsigned int I2C_writeAnything (const T& value)
   return sizeof (value);
   }  // end of I2C_writeAnything
 
+// template <typename T> unsigned int I2C_readAnything(T& value)
+//   {
+//     byte * p = (byte*) &value;
+//     unsigned int i;
+//     for (i = 0; i < sizeof value; i++)
+//           *p++ = Wire.read();
+//     return i;
+//   }  // end of I2C_readAnything
+
 template <typename T> unsigned int I2C_readAnything(T& value)
-  {
+{
     byte * p = (byte*) &value;
-    unsigned int i;
-    for (i = 0; i < sizeof value; i++)
-          *p++ = Wire.read();
+    unsigned int i = 0;
+    while (Wire.available() && i < sizeof(value)) {
+        *p++ = Wire.read();
+        i++;
+    }
     return i;
-  }  // end of I2C_readAnything
-
-
+}
