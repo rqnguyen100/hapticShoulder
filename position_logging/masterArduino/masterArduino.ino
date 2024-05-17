@@ -1,6 +1,6 @@
 #include "motor.h"
-#include <Wire.h>
-#include "I2C_Anything.h"
+// #include <Wire.h>
+// #include "I2C_Anything.h"
 
 /*
   intialize motor class with inputs
@@ -28,41 +28,42 @@ unsigned long timestamp;
 
 void setup() {
     // Begin serial monitor
-    Wire.begin();
-    // pinMode(LED_BUILTIN,OUTPUT);
-
-    // Change PWM pin frequency to 20kHz
-    // TCCR1B &= ~7;
-    // TCCR1B |= 1;
-    // TCCR2B &= ~7;
-    // TCCR2B |= 1;
-    // TCCR4B &= ~7;
-    // TCCR4B |= 1;
+    // Wire.begin();
+    Serial.begin(9600);
 
     // Initialize
     motor1.begin(motor1.aPin, motor1.bPin);
-    motor2.begin(motor2.aPin, motor2.bPin);
-    motor3.begin(motor3.aPin, motor3.bPin);
+    // motor2.begin(motor2.aPin, motor2.bPin);
+    // motor3.begin(motor3.aPin, motor3.bPin);
 }
 
 void loop() {
     // Calculate initial shaft position
     motor1.calcPosition();
-    motor2.calcPosition();
-    motor3.calcPosition();
+    // motor2.calcPosition();
+    // motor3.calcPosition();
 
     timestamp = millis();
 
     motor1_pos = motor1.position;
-    motor2_pos = motor2.position;
-    motor3_pos = motor3.position;
+    // motor2_pos = motor2.position;
+    // motor3_pos = motor3.position;
+
+    Serial.print("Sending: ");
+    Serial.println(motor1_pos); 
+    // Serial.print(", ");
+    // Serial.print(motor2_pos); 
+    // Serial.print(", ");
+    // Serial.println(motor3_pos); 
+    // Serial.print(", ");
+    // Serial.println(timestamp);
     
-    Wire.beginTransmission(SLAVE_ADDRESS);
-    I2C_writeAnything(motor1_pos);
-    I2C_writeAnything(motor2_pos);
-    I2C_writeAnything(motor3_pos);
-    I2C_writeAnything(timestamp);
-    Wire.endTransmission();
+    // Wire.beginTransmission(SLAVE_ADDRESS);
+    // // I2C_writeAnything(motor1_pos);
+    // // I2C_writeAnything(motor2_pos);
+    // I2C_writeAnything(motor3_pos);
+    // I2C_writeAnything(timestamp);
+    // Wire.endTransmission();
 
     delay(1000);
 

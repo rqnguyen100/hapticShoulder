@@ -6,7 +6,7 @@ motor::motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperL
     : motorID(motorID), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
-motor* motor::instances[2] = {NULL,NULL};
+motor* motor::instances[3] = {NULL, NULL, NULL};
 
 void motor::encoderAPulseExt0(){
   if (motor::instances[0] != NULL){

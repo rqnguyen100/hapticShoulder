@@ -45,7 +45,7 @@ public:
     static bool coupleBool;
 
     /*Instance Handler*/
-    static motor * instances [2];
+    static motor * instances [3];
     static void encoderAPulseExt0();
     static void encoderAPulseExt1();
     static void encoderAPulseExt2();
