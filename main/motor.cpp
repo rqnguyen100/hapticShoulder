@@ -32,18 +32,6 @@ void motor::encoderBPulseExt0(){
   }
 }
 
-void motor::encoderBPulseExt1(){
-  if (motor::instances[1] != NULL){
-    motor::instances[1]->encoderBPulse();
-  }
-} 
-
-void motor::encoderBPulseExt2(){
-  if (motor::instances[2] != NULL){
-    motor::instances[2]->encoderBPulse();
-  }
-} 
-
 void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
@@ -59,19 +47,17 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
   switch (aPin){
     case 2: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+      // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
       instances[0] = this;
       break;
         
     case 18: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
       instances[1] = this;
       break;
 
-    case 20:
+    case 19:
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
       instances[2] = this;
       break;
   }
@@ -105,29 +91,29 @@ void motor::encoderAPulse() {
     }
 }
 
-void motor::encoderBPulse(){
-  // Read channels
-  motor::aState = digitalRead(motor::aPin);
-  motor::bState = digitalRead(motor::bPin);
+// void motor::encoderBPulse(){
+//   // Read channels
+//   motor::aState = digitalRead(motor::aPin);
+//   motor::bState = digitalRead(motor::bPin);
 
-  // Determine direction based on A and B state
-  if (motor::bState){
-    if (motor::aState){
-      motor::encoderCount++;
-    }
-    else {
-      motor::encoderCount--;
-    }
-  }
-  else {
-    if (motor::aState){
-      motor::encoderCount--;
-    }
-    else {
-      motor::encoderCount++;
-    }
-  }
-}
+//   // Determine direction based on A and B state
+//   if (motor::bState){
+//     if (motor::aState){
+//       motor::encoderCount++;
+//     }
+//     else {
+//       motor::encoderCount--;
+//     }
+//   }
+//   else {
+//     if (motor::aState){
+//       motor::encoderCount--;
+//     }
+//     else {
+//       motor::encoderCount++;
+//     }
+//   }
+// }
 
 /* ====================================================================== */
 bool motor::coupleBool = 0;

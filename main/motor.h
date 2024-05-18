@@ -51,8 +51,6 @@ public:
     static void encoderAPulseExt1();
     static void encoderAPulseExt2();
     static void encoderBPulseExt0();
-    static void encoderBPulseExt1();
-    static void encoderBPulseExt2();
 
 public:
     /*Functions*/
@@ -75,7 +73,7 @@ private:
       aPin Change = 2x Resolution (B does not have to be connected to interrupt pin)
       aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
     */
-    const float resolution = 4; // dependent on number of interrupt pins used
+    const float resolution = 2; // dependent on number of interrupt pins used
 };
 
 #endif

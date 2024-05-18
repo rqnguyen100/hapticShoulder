@@ -5,7 +5,6 @@
     - motorID
     - gear ratio
     - aPin (encoder A channel)
-      - Disclaimer: if you are not using either 2, 18, or 20 for aPin, you need to change motor::begin
     - bPin (encoder B channel)
     - pwmPin (E1 speed control)
     - dirPin (M1 direction control)
@@ -17,8 +16,8 @@
 */
 
 motor motor1(1, 10./3, 2, 3, 8, 9, 90, -90);
-motor motor2(2, 1, 18, 19, 10, 11, 45, -45);
-motor motor3(3, 10./3, 20, 21, 6, 7,   45, -45);
+motor motor2(2, 10./3, 18, 14, 6, 7, 45, -45);
+motor motor3(3, 1, 19, 15, 10, 11, 45, -45);
 
 
 void setup() {
