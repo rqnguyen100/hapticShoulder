@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int motorID, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
-    : motorID(motorID), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
+motor::motor(int motorID, float gearRatio, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
+    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
 motor* motor::instances[3] = {NULL, NULL, NULL};
@@ -32,18 +32,6 @@ void motor::encoderBPulseExt0(){
   }
 }
 
-void motor::encoderBPulseExt1(){
-  if (motor::instances[1] != NULL){
-    motor::instances[1]->encoderBPulse();
-  }
-} 
-
-void motor::encoderBPulseExt2(){
-  if (motor::instances[2] != NULL){
-    motor::instances[2]->encoderBPulse();
-  }
-} 
-
 void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
@@ -59,26 +47,24 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
   switch (aPin){
     case 2: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+      // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
       instances[0] = this;
       break;
         
-    case 19: 
+    case 18: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
       instances[1] = this;
       break;
 
-    case 20:
+    case 19:
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
       instances[2] = this;
       break;
   }
 } 
 
 void motor::calcPosition() {
-    motor::position = motor::encoderCount * (360. / (CPR * resolution));
+    motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution)) ;
 }
 
 void motor::encoderAPulse() {
@@ -105,29 +91,29 @@ void motor::encoderAPulse() {
     }
 }
 
-void motor::encoderBPulse(){
-  // Read channels
-  motor::aState = digitalRead(motor::aPin);
-  motor::bState = digitalRead(motor::bPin);
+// void motor::encoderBPulse(){
+//   // Read channels
+//   motor::aState = digitalRead(motor::aPin);
+//   motor::bState = digitalRead(motor::bPin);
 
-  // Determine direction based on A and B state
-  if (motor::bState){
-    if (motor::aState){
-      motor::encoderCount++;
-    }
-    else {
-      motor::encoderCount--;
-    }
-  }
-  else {
-    if (motor::aState){
-      motor::encoderCount--;
-    }
-    else {
-      motor::encoderCount++;
-    }
-  }
-}
+//   // Determine direction based on A and B state
+//   if (motor::bState){
+//     if (motor::aState){
+//       motor::encoderCount++;
+//     }
+//     else {
+//       motor::encoderCount--;
+//     }
+//   }
+//   else {
+//     if (motor::aState){
+//       motor::encoderCount--;
+//     }
+//     else {
+//       motor::encoderCount++;
+//     }
+//   }
+// }
 
 /* ====================================================================== */
 bool motor::coupleBool = 0;
@@ -137,8 +123,9 @@ void motor::calcTorqueOutput(){
   int upperLimit = motor::upperLim;
   int lowerLimit = motor::lowerLim;
 
+  /*
   // check for coupling
-  if (motor::motorID == 1 && abs(motor::position) > 10){
+  if (motor::motorID == 1 && abs(motor::position) > 45){
     motor::coupleBool = 1;
   }
   else if (motor::motorID == 1){
@@ -151,9 +138,10 @@ void motor::calcTorqueOutput(){
     lowerLimit = -90;
   }
   else if (motor::motorID == 2){
-    upperLimit = 30;
-    lowerLimit = -30;
+    upperLimit = 45;
+    lowerLimit = -45;
   }
+  */
 
   // calculate handle position
   if (motor::position < lowerLimit){
