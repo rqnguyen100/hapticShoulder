@@ -3,8 +3,8 @@
 
 const int SLAVE_ADDRESS = 9;
 volatile boolean haveData = false;
-volatile double motor1_pos; 
-volatile double motor2_pos; 
+volatile double motor1_pos;
+volatile double motor2_pos;
 volatile double motor3_pos;
 
 unsigned long timestamp;
@@ -15,13 +15,13 @@ void setup() {
   Wire.onReceive(receiveEvent);
   Serial.begin(9600);
   
-  Serial.print("Motor 1");
+  Serial.print("M1 (MUJ Big)");
   Serial.print(", ");
-  Serial.print("Motor 2");
+  Serial.print("M2 (Rotational)");
   Serial.print(", ");
-  Serial.print("Motor 3");
+  Serial.print("M3 (MUJ Small)");
   Serial.print(", ");
-  Serial.println("Timestamp");
+  Serial.println("Time from startup (ms)");
 }
 
 void loop() {
