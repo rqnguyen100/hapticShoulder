@@ -4,7 +4,9 @@
   intialize motor class with inputs
     - motorID
     - gear ratio
+      - Disclaimer: must be float if not an integer
     - aPin (encoder A channel)
+      - Disclaimer: must verify begin() switch statement is consistent with pins
     - bPin (encoder B channel)
     - pwmPin (E1 speed control)
     - dirPin (M1 direction control)
@@ -15,9 +17,9 @@
       - damper ratio (default = 0.35)
 */
 
-motor motor1(1, 10./3, 2, 3, 8, 9, 90, -90);
-motor motor2(2, 10./3, 18, 14, 6, 7, 45, -45);
-motor motor3(3, 1, 19, 15, 10, 11, 45, -45);
+motor motor1(1, 10./3,  2,  3, 9, 10, 10, -10);
+motor motor2(2, 10./3, 19, 15, 7, 42, 20, -20);
+motor motor3(3, 1, 18, 14, 6, 43, 30, -30);
 
 
 void setup() {
@@ -46,9 +48,7 @@ void loop() {
     motor2.calcPosition();
     motor3.calcPosition();
 
-    Serial.print(motor1.position);
-    Serial.print(" || ");
-    Serial.print(motor2.position);
-    Serial.print(" || ");
-    Serial.println(motor3.position);
+    motor1.calcTorqueOutput();
+    motor2.calcTorqueOutput();
+    motor3.calcTorqueOutput();
 }

@@ -50,7 +50,7 @@ public:
     static void encoderAPulseExt0();
     static void encoderAPulseExt1();
     static void encoderAPulseExt2();
-    static void encoderBPulseExt0();
+    // static void encoderBPulseExt0();
 
 public:
     /*Functions*/
@@ -59,7 +59,7 @@ public:
     void begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin);
 
     void encoderAPulse();
-    void encoderBPulse();
+    // void encoderBPulse();
 
     void calcPosition();
     void calcTorqueOutput();

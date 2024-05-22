@@ -26,11 +26,11 @@ void motor::encoderAPulseExt2(){
   }
 } 
 
-void motor::encoderBPulseExt0(){
-  if (motor::instances[0] != NULL){
-    motor::instances[0]->encoderBPulse();
-  }
-}
+// void motor::encoderBPulseExt0(){
+//   if (motor::instances[0] != NULL){
+//     motor::instances[0]->encoderBPulse();
+//   }
+// }
 
 void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
@@ -51,12 +51,12 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
       instances[0] = this;
       break;
         
-    case 18: 
+    case 19: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
       instances[1] = this;
       break;
 
-    case 19:
+    case 18:
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
       instances[2] = this;
       break;
@@ -64,7 +64,7 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
 } 
 
 void motor::calcPosition() {
-    motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution)) ;
+    motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
 }
 
 void motor::encoderAPulse() {
@@ -151,7 +151,7 @@ void motor::calcTorqueOutput(){
     motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
   }
   else{
-    motor::position = motor::encoderCount * (360. / (CPR * 4));
+    motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
     return; // break function if in free ROM to save computational time
   }
 
