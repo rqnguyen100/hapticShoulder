@@ -1,21 +1,35 @@
 // Wiring found here: https://psc.byu.edu/00000179-d3ea-d26e-a37b-fffaa40b0001/limit-switch-wiring
 
-#define LIMIT_SWITCH_PIN 7
+#define lsPin 7
+bool lsState;
+
+double upperLim = 0;
+bool upperSet = 1;
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP);
-  pinMode(13, OUTPUT);
+  Serial.begin(9600);
+
+  pinMode(lsPin, INPUT_PULLUP);
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (digitalRead(LIMIT_SWITCH_PIN) == HIGH) {
-    digitalWrite(13, HIGH);
-  }
-  else{
-    digitalWrite(13, LOW);
+  while (upperSet){
+    lsState = digitalRead(lsPin);
+
+    if (lsState) {
+      upperLim = 90;
+      upperSet = 0;
+      Serial.println("Calibrated");
+    }
+    else{
+      Serial.println("Calibrating...");
+    }
+
+    delay(100);
   }
 
+  Serial.println("Ready to Go");
   delay(100);
 }
