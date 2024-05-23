@@ -17,9 +17,9 @@
       - damper ratio (default = 0.35)
 */
 
-motor motor1(1, 10./3,  2,  3, 9, 10, 10, -10);
-motor motor2(2, 10./3, 19, 15, 7, 42, 20, -20);
-motor motor3(3, 1, 18, 14, 6, 43, 30, -30);
+motor motor1(1, 1, 2, 3, 9, 8, 30, -30);
+// motor motor2(2, 1, 18, 5, 7, 42, 20, -20);
+// motor motor3(3, 1, 19, 6, 6, 43, 30, -30);
 
 
 void setup() {
@@ -38,17 +38,22 @@ void setup() {
 
     // Initialize
     motor1.begin(motor1.aPin, motor1.bPin, motor1.pwmPin, motor1.dirPin);
-    motor2.begin(motor2.aPin, motor2.bPin, motor2.pwmPin, motor2.dirPin);
-    motor3.begin(motor3.aPin, motor3.bPin, motor3.pwmPin, motor3.dirPin);
+    // motor2.begin(motor2.aPin, motor2.bPin, motor2.pwmPin, motor2.dirPin);
+    // motor3.begin(motor3.aPin, motor3.bPin, motor3.pwmPin, motor3.dirPin);
 }
 
 void loop() {
     // Calculate initial shaft position
     motor1.calcPosition();
-    motor2.calcPosition();
-    motor3.calcPosition();
+    // motor2.calcPosition();
+    // motor3.calcPosition();
 
+    // print position for logging purposes
+    Serial.println(motor1.position);
+
+    // Do haptics
     motor1.calcTorqueOutput();
-    motor2.calcTorqueOutput();
-    motor3.calcTorqueOutput();
+    
+    // motor2.calcTorqueOutput();
+    // motor3.calcTorqueOutput();
 }
