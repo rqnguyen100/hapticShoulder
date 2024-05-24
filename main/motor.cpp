@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int motorID, float gearRatio, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
-    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
+motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
+    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
 motor* motor::instances[3] = {NULL, NULL, NULL};
@@ -44,9 +44,11 @@ void motor::encoderBPulseExt2(){
   }
 }
 
-void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin){
+void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
+  pinMode(invAPin, INPUT);
+  pinMode(invBPin, INPUT);
 
   pinMode(pwmPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
@@ -59,19 +61,19 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
   switch (aPin){
     case 2: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt0, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
+      // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt0, CHANGE);
       instances[0] = this;
       break;
         
     case 18:
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt1, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
+      // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt1, CHANGE);
       instances[1] = this;
       break;
 
     case 19: 
       attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulseExt2, CHANGE);
-      attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
+      // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulseExt2, CHANGE);
       instances[2] = this;
       break;
 
@@ -79,41 +81,53 @@ void motor::begin(const byte aPin, const byte bPin, const byte pwmPin, const byt
 } 
 
 void motor::calcPosition() {
-    motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
 }
 
 void motor::encoderAPulse() {
     // Read channels
-    motor::aState = digitalRead(motor::aPin);
-    motor::bState = digitalRead(motor::bPin);
+  motor::aState = digitalRead(motor::aPin);
+  motor::bState = digitalRead(motor::bPin);
+  motor::invAState = digitalRead(motor::invAPin);
+  motor::invBState = digitalRead(motor::invBPin);
+
+  // Reconstruct signal to reduce noise
+  motor::reconstructedA = motor::aState && !motor::invAState;
+  motor::reconstructedB = motor::bState && !motor::invBState;
 
     // Determine direction based on A and B state
-    if (motor::aState) {
-        if (motor::bState) {
-            motor::encoderCount--;
-        }
-        else {
-            motor::encoderCount++;
-        }
+  if (motor::reconstructedA) {
+    if (motor::reconstructedB) {
+      motor::encoderCount--;
     }
     else {
-        if (motor::bState) {
-            motor::encoderCount++;
-        }
-        else {
-            motor::encoderCount--;
-        }
+      motor::encoderCount++;
     }
+  }
+  else {
+    if (motor::reconstructedB) {
+      motor::encoderCount++;
+    }
+    else {
+      motor::encoderCount--;
+    }
+  }
 }
 
 void motor::encoderBPulse(){
   // Read channels
   motor::aState = digitalRead(motor::aPin);
   motor::bState = digitalRead(motor::bPin);
+  motor::invAState = digitalRead(motor::invAPin);
+  motor::invBState = digitalRead(motor::invBPin);
 
-  // Determine direction based on A and B state
-  if (motor::bState){
-    if (motor::aState){
+  // Reconstruct signal to reduce noise
+  motor::reconstructedA = motor::aState && !motor::invAState;
+  motor::reconstructedB = motor::bState && !motor::invBState;
+
+    // Determine direction based on A and B state
+  if (motor::reconstructedB) {
+    if (motor::reconstructedA) {
       motor::encoderCount++;
     }
     else {
@@ -121,7 +135,7 @@ void motor::encoderBPulse(){
     }
   }
   else {
-    if (motor::aState){
+    if (motor::reconstructedA) {
       motor::encoderCount--;
     }
     else {
@@ -196,7 +210,7 @@ void motor::calcTorqueOutput(){
     motor::duty = 0;
   }   
 
-  motor::torqueOutput = (int)(motor::duty*150);   // convert duty cycle to output signal
+  motor::torqueOutput = (int)(motor::duty*50);   // convert duty cycle to output signal
 
   // Check direction to oppose force
   if(motor::forceP < 0) { 

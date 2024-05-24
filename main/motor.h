@@ -12,8 +12,14 @@ public:
     /*Attributes Relating to Encoder*/
     const int aPin;
     const int bPin;
+    const int invAPin;
+    const int invBPin;
     volatile bool aState;
     volatile bool bState;
+    volatile bool invAState;
+    volatile bool invBState;
+    volatile bool reconstructedA;
+    volatile bool reconstructedB;
     volatile double encoderCount;
     volatile double position;
 
@@ -50,16 +56,18 @@ public:
     static void encoderAPulseExt0();
     static void encoderAPulseExt1();
     static void encoderAPulseExt2();
-    // static void encoderBPulseExt0();
+    static void encoderBPulseExt0();
+    static void encoderBPulseExt1();
+    static void encoderBPulseExt2();
 
 public:
     /*Functions*/
-    motor(int motorID, float gearRatio, int aPin, int bPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
+    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
-    void begin(const byte aPin, const byte bPin, const byte pwmPin, const byte dirPin);
+    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte pwmPin, const byte dirPin);
 
     void encoderAPulse();
-    // void encoderBPulse();
+    void encoderBPulse();
 
     void calcPosition();
     void calcTorqueOutput();
@@ -73,7 +81,7 @@ private:
       aPin Change = 2x Resolution (B does not have to be connected to interrupt pin)
       aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
     */
-    const float resolution = 4; // dependent on number of interrupt pins used
+    const float resolution = 2; // dependent on number of interrupt pins used
 };
 
 #endif
