@@ -25,6 +25,8 @@ motor motor1(1, 1, 2, 6, 4, 5, 12, 11, 9, 8, 90, -90);
 // motor motor2(2, 1, 18, 5, 7, 42, 20, -20);
 // motor motor3(3, 1, 19, 6, 6, 43, 30, -30);
 
+unsigned long timestamp;
+
 
 void setup() {
     // Begin serial monitor
@@ -54,7 +56,12 @@ void loop() {
     // Do haptics
     motor1.calcTorqueOutput();
 
+    timestamp = millis();
+
     // print position for logging purposes
-    Serial.println(motor1.truePosition);
+    Serial.print(motor1.truePosition);
+    Serial.print(", ");
+    Serial.println(timestamp);
+        
     delay(10);
 }
