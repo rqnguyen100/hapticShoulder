@@ -91,10 +91,10 @@ void motor::calibratePosition(){
       if (digitalRead(motor::upperLimitPin)) {
         upperSet = 0;
         motor::calibratedUpperLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-        Serial.println("Calibrated Upper Limit");
+        //Serial.println("Calibrated Upper Limit");
         }
       else {
-        Serial.println("Move arm to upper limit switch...");
+        //Serial.println("Move arm to upper limit switch...");
         }
 
       delay(10);
@@ -104,10 +104,10 @@ void motor::calibratePosition(){
       if (digitalRead(motor::lowerLimitPin)) {
         lowerSet = 0;
         motor::calibratedLowerLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-        Serial.println("Calibrated Lower Limit");
+        //Serial.println("Calibrated Lower Limit");
         }
       else{
-        Serial.println("Move arm to lower limit switch...");
+        //Serial.println("Move arm to lower limit switch...");
         }
 
       delay(10);
@@ -115,6 +115,8 @@ void motor::calibratePosition(){
 
   motor::positionBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
 
+  delay(5000);
+  /*
   while (true) {
     Serial.println("Return arm to free range and press enter...");
     delay(100);
@@ -136,6 +138,7 @@ void motor::calibratePosition(){
       }
     }
   }
+  */
 }
 
 void motor::calcPosition() {
