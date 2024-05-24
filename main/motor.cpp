@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
-    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
+motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
+    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), upperLimitPin(upperLimitPin), lowerLimitPin(lowerLimitPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
 motor* motor::instances[3] = {NULL, NULL, NULL};
@@ -44,11 +44,14 @@ void motor::encoderBPulseExt2(){
   }
 }
 
-void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte pwmPin, const byte dirPin){
+void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
   pinMode(invAPin, INPUT);
   pinMode(invBPin, INPUT);
+
+  pinMode(upperLimitPin, INPUT);
+  pinMode(lowerLimitPin, INPUT);
 
   pinMode(pwmPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
@@ -80,8 +83,64 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
   }
 } 
 
+void motor::calibratePosition(){
+    bool upperSet = 1;
+    bool lowerSet = 1;
+
+    while (upperSet){
+      if (digitalRead(motor::upperLimitPin)) {
+        upperSet = 0;
+        motor::calibratedUpperLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+        Serial.println("Calibrated Upper Limit");
+        }
+      else {
+        Serial.println("Move arm to upper limit switch...");
+        }
+
+      delay(10);
+    }
+
+    while (lowerSet){
+      if (digitalRead(motor::lowerLimitPin)) {
+        lowerSet = 0;
+        motor::calibratedLowerLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+        Serial.println("Calibrated Lower Limit");
+        }
+      else{
+        Serial.println("Move arm to lower limit switch...");
+        }
+
+      delay(10);
+    }
+
+  motor::positionBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
+
+  while (true) {
+    Serial.println("Return arm to free range and press enter...");
+    delay(100);
+
+    if (Serial.available() > 0) {
+      char c = Serial.read();
+
+      // Check if the received character is newline (Enter key)
+      if (c == '\n') {
+        Serial.println("Enter pressed. Loading program...");
+        Serial.print("[");
+        for (int i = 0; i < 10; i++) {
+          Serial.print("█");
+          delay(250);
+          }
+        Serial.println("]");
+        delay(1000);
+        break;
+      }
+    }
+  }
+}
+
 void motor::calcPosition() {
-    motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+  motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+  motor::truePosition = motor::position - motor::positionBias;
 }
 
 void motor::encoderAPulse() {
@@ -174,13 +233,14 @@ void motor::calcTorqueOutput(){
 
   // calculate handle position
   if (motor::position < lowerLimit){
-    motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
+    motor::xh = rh*(motor::truePosition - lowerLimit)*(3.14/180);
   }
   else if (motor::position > upperLimit){
-    motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
+    motor::xh = rh*(motor::truePosition - upperLimit)*(3.14/180);
   }
   else{
-    motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::truePosition = motor::position - motor::positionBias;
     return; // break function if in free ROM to save computational time
   }
 

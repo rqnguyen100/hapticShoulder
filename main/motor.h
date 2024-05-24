@@ -22,6 +22,14 @@ public:
     volatile bool reconstructedB;
     volatile double encoderCount;
     volatile double position;
+    volatile double truePosition;
+
+    /*Attributes Relating to Limit Switch*/
+    const int upperLimitPin;
+    const int lowerLimitPin;
+    int calibratedUpperLim;
+    int calibratedLowerLim;
+    int positionBias;
 
     /*Attributes Relating to Motor*/
     const int dirPin; // M1 Pin
@@ -62,14 +70,15 @@ public:
 
 public:
     /*Functions*/
-    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
+    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
-    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte pwmPin, const byte dirPin);
+    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dirPin);
 
     void encoderAPulse();
     void encoderBPulse();
 
     void calcPosition();
+    void calibratePosition();
     void calcTorqueOutput();
 
 private:
