@@ -21,16 +21,19 @@
       - damper ratio (default = 0.35)
 */
 
-motor motor1(1, 1, 2, 6, 4, 5, 12, 11, 9, 8, 90, -90);
-// motor motor2(2, 1, 18, 5, 7, 42, 20, -20);
-// motor motor3(3, 1, 19, 6, 6, 43, 30, -30);
+motor motor1(1, 10./3,  2, 6, 4, 5, 0, 0, 9, 10, 20, -20); // big basket
+motor motor2(2, 1,     18, 17, 16, 15, 0, 0, 11, 32, 45, -45); // humeral
+motor motor3(3, 10./3, 19, 20, 21, 22, 0, 0, 12, 33, 20, -20); // small basket
 
 unsigned long timestamp;
-
 
 void setup() {
     // Begin serial monitor
     Serial.begin(9600);
+
+    // Velocity LED
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
 
     // Change PWM pin frequency to 20kHz
     /*
@@ -44,24 +47,30 @@ void setup() {
 
     // Initialize Pins
     motor1.begin(motor1.aPin, motor1.bPin, motor1.invAPin, motor1.invBPin, motor1.upperLimitPin, motor1.lowerLimitPin, motor1.pwmPin, motor1.dirPin);
+    motor2.begin(motor2.aPin, motor2.bPin, motor2.invAPin, motor2.invBPin, motor2.upperLimitPin, motor2.lowerLimitPin, motor2.pwmPin, motor2.dirPin);
+    motor3.begin(motor3.aPin, motor3.bPin, motor3.invAPin, motor3.invBPin, motor3.upperLimitPin, motor3.lowerLimitPin, motor3.pwmPin, motor3.dirPin);
 
     // Calibrate Position
-    motor1.calibratePosition();
+    // motor1.calibratePosition();
 }
 
 void loop() {
     // Calculate position output
     motor1.calcPosition();
+    motor2.calcPosition();
+    motor3.calcPosition();
 
     // Do haptics
-    motor1.calcTorqueOutput();
+    // motor1.calcTorqueOutput();
+    motor2.calcTorqueOutput();
+    // motor3.calcTorqueOutput();
 
-    timestamp = millis();
+    // timestamp = millis();
 
-    // print position for logging purposes
-    Serial.print(motor1.truePosition);
-    Serial.print(", ");
-    Serial.println(timestamp);
+    // // print position for logging purposes
+    // Serial.print(motor1.truePosition);
+    // Serial.print(", ");
+    // Serial.println(timestamp);
         
-    delay(10);
+    // delay(10);
 }

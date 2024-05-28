@@ -50,8 +50,8 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
   pinMode(invAPin, INPUT);
   pinMode(invBPin, INPUT);
 
-  pinMode(upperLimitPin, INPUT);
-  pinMode(lowerLimitPin, INPUT);
+  //pinMode(upperLimitPin, INPUT);
+  //pinMode(lowerLimitPin, INPUT);
 
   pinMode(pwmPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
@@ -142,8 +142,8 @@ void motor::calibratePosition(){
 }
 
 void motor::calcPosition() {
-  motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-  motor::truePosition = motor::position - motor::positionBias;
+  motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+  // motor::truePosition = motor::position - motor::positionBias;
 }
 
 void motor::encoderAPulse() {
@@ -236,15 +236,29 @@ void motor::calcTorqueOutput(){
 
   // calculate handle position
   if (motor::position < lowerLimit){
-    motor::xh = rh*(motor::truePosition - lowerLimit)*(3.14/180);
+    motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
   }
   else if (motor::position > upperLimit){
-    motor::xh = rh*(motor::truePosition - upperLimit)*(3.14/180);
+    motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
   }
   else{
     motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-    motor::truePosition = motor::position - motor::positionBias;
+    // motor::truePosition = motor::position - motor::positionBias;
     return; // break function if in free ROM to save computational time
+  }
+
+  // Position Limit
+  if (motor::position > 360){
+    digitalWrite(LED_BUILTIN, HIGH);
+    while (true){
+      analogWrite(motor::pwmPin, 0);
+    }
+  }
+  else if (motor::position < -360){
+    digitalWrite(LED_BUILTIN, HIGH);
+    while (true){
+      analogWrite(motor::pwmPin, 0);
+    }
   }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
@@ -252,6 +266,14 @@ void motor::calcTorqueOutput(){
   motor::lastXh = motor::xh;
   motor::lastLastVh = motor::lastVh;
   motor::lastVh = motor::vh;
+
+  // Velocity Limit
+  if (motor::vh > 20){
+    digitalWrite(LED_BUILTIN, HIGH);
+    while (true){
+      analogWrite(motor::pwmPin, 0);
+    }
+  }
 
   // Render a virtual spring
   motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
@@ -276,7 +298,7 @@ void motor::calcTorqueOutput(){
   motor::torqueOutput = (int)(motor::duty*50);   // convert duty cycle to output signal
 
   // Check direction to oppose force
-  if(motor::forceP < 0) { 
+  if(motor::forceP < 0) {
     digitalWrite(motor::dirPin, HIGH);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   } 
