@@ -32,8 +32,9 @@ public:
     int positionBias;
 
     /*Attributes Relating to Motor*/
-    const int dirPin; // M1 Pin
-    const int pwmPin; // E1 Pin
+    const int dir1Pin; // IN1 Pin
+    const int dir2Pin; // IN2 Pin
+    const int pwmPin; // EN Pin
 
     /*Attributes Relating to Haptics*/
     const int kSpring;
@@ -70,9 +71,9 @@ public:
 
 public:
     /*Functions*/
-    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
+    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dir1Pin, int dir2Pin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
-    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dirPin);
+    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dir1Pin, const byte dir2Pin);
 
     void encoderAPulse();
     void encoderBPulse();
@@ -91,6 +92,9 @@ private:
       aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
     */
     const float resolution = 2; // dependent on number of interrupt pins used
+
+    /*Motor Output*/
+    const int tarunFactor = 200;
 };
 
 #endif

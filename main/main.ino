@@ -12,8 +12,9 @@
     - invBPin (encoder inverse B channel)
     - upperLimitPin [calibrate upper limit]
     - lowerLimitPin [calibrate lower limit]
-    - pwmPin (E1 speed control)
-    - dirPin (M1 direction control)
+    - pwmPin (EN speed control)
+    - dirPin1 (IN1 direction control)
+    - dirPin2 (IN2 direction control)
     - upperLimit in deg (for free ROM) [has to be positive]
     - lowerLimit in deg (for free ROM) [has to be negative]
     [optional]
@@ -21,9 +22,10 @@
       - damper ratio (default = 0.35)
 */
 
-motor motor1(1, 10./3,  2, 6, 4, 5, 0, 0, 9, 10, 20, -20); // big basket
-motor motor2(2, 1,     18, 17, 16, 15, 0, 0, 11, 32, 45, -45); // humeral
-motor motor3(3, 10./3, 19, 20, 21, 22, 0, 0, 12, 33, 20, -20); // small basket
+motor test(1, 1, 8, 9, 10, 11, 12, 7, 3, 4, 5, 45, -45);
+// motor mujBig(   1, 10./3,  2,  4,  5,  6, 0, 0,  9, 10, 37, 20, -20); 
+// motor separateJ(2,     1, 18, 17, 16, 15, 0, 0, 11, 33, X, 45, -45);
+// motor mujSmall( 3, 10./3, 19, 20, 21, 22, 0, 0, 12, 24, X, 20, -20);  
 
 unsigned long timestamp;
 
@@ -46,29 +48,34 @@ void setup() {
     */
 
     // Initialize Pins
-    motor1.begin(motor1.aPin, motor1.bPin, motor1.invAPin, motor1.invBPin, motor1.upperLimitPin, motor1.lowerLimitPin, motor1.pwmPin, motor1.dirPin);
-    motor2.begin(motor2.aPin, motor2.bPin, motor2.invAPin, motor2.invBPin, motor2.upperLimitPin, motor2.lowerLimitPin, motor2.pwmPin, motor2.dirPin);
-    motor3.begin(motor3.aPin, motor3.bPin, motor3.invAPin, motor3.invBPin, motor3.upperLimitPin, motor3.lowerLimitPin, motor3.pwmPin, motor3.dirPin);
+    test.begin(test.aPin, test.bPin, test.invAPin, test.invBPin, test.upperLimitPin, test.lowerLimitPin, test.pwmPin, test.dir1Pin, test.dir2Pin);
+    // mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dir1Pin, mujBig.dir2Pin);
+    // separateJ.begin(separateJ.aPin, separateJ.bPin, separateJ.invAPin, separateJ.invBPin, separateJ.upperLimitPin, separateJ.lowerLimitPin, separateJ.pwmPin, separateJ.dir1Pin, separateJ.dir2Pin);
+    // mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dir1Pin, mujSmall.dir2Pin);
 
     // Calibrate Position
-    // motor1.calibratePosition();
+    // mujBig.calibratePosition();
 }
 
 void loop() {
     // Calculate position output
-    motor1.calcPosition();
-    motor2.calcPosition();
-    motor3.calcPosition();
+    test.calcPosition();
+    // mujBig.calcPosition();
+    // separateJ.calcPosition();
+    // mujSmall.calcPosition();
 
     // Do haptics
-    // motor1.calcTorqueOutput();
-    motor2.calcTorqueOutput();
-    // motor3.calcTorqueOutput();
+    test.calcTorqueOutput();
+    // mujBig.calcTorqueOutput();
+    // separateJ.calcTorqueOutput();
+    // mujSmall.calcTorqueOutput();
 
     // timestamp = millis();
 
+    // Serial.println(separateJ.position);
+
     // // print position for logging purposes
-    // Serial.print(motor1.truePosition);
+    // Serial.print(mujBig.truePosition);
     // Serial.print(", ");
     // Serial.println(timestamp);
         

@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
-    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), upperLimitPin(upperLimitPin), lowerLimitPin(lowerLimitPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
+motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dir1Pin, int dir2Pin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
+    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), upperLimitPin(upperLimitPin), lowerLimitPin(lowerLimitPin), pwmPin(pwmPin), dir1Pin(dir1Pin), dir2Pin(dir2Pin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
 motor* motor::instances[3] = {NULL, NULL, NULL};
@@ -44,17 +44,18 @@ void motor::encoderBPulseExt2(){
   }
 }
 
-void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dirPin){
+void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dir1Pin, const byte dir2Pin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
   pinMode(invAPin, INPUT);
   pinMode(invBPin, INPUT);
 
-  //pinMode(upperLimitPin, INPUT);
-  //pinMode(lowerLimitPin, INPUT);
+  // pinMode(upperLimitPin, INPUT);
+  //  pinMode(lowerLimitPin, INPUT);
 
   pinMode(pwmPin, OUTPUT);
-  pinMode(dirPin, OUTPUT);
+  pinMode(dir1Pin, OUTPUT);
+  pinMode(dir2Pin, OUTPUT);
 
   /*
     aPin Rising = 1x Resolution (B does not have to be connected to interrupt pin)
@@ -295,15 +296,24 @@ void motor::calcTorqueOutput(){
     motor::duty = 0;
   }   
 
-  motor::torqueOutput = (int)(motor::duty*50);   // convert duty cycle to output signal
+  motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
+  /* MOTOR INPUTS
+    in1 HIGH & in2 LOW = CW
+    in1 LOW & in2 HIGH = CCW
+    in1 LOW & in2 LOW = OFF
+
+    analogWrite PWM = [0, 255]
+  */
   if(motor::forceP < 0) {
-    digitalWrite(motor::dirPin, HIGH);
+    digitalWrite(motor::dir1Pin, HIGH);
+    digitalWrite(motor::dir2Pin, LOW);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   } 
   else {
-    digitalWrite(motor::dirPin, LOW);
+    digitalWrite(motor::dir1Pin, LOW);
+    digitalWrite(motor::dir2Pin, HIGH);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   }
 }
