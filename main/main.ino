@@ -22,7 +22,7 @@
       - damper ratio (default = 0.35)
 */
 
-motor test(1, 1, 8, 9, 10, 11, 12, 7, 3, 4, 5, 45, -45);
+// motor test(1, 1, 8, 9, 10, 11, 12, 7, 3, 4, 5, 45, -45);
 motor mujBig(   1, 10./3,  2,  4,  5,  6, 0, 0,  8, 31, 43, 20, -20); 
 motor separateJ(2,     1, 18, 17, 16, 15, 0, 0, 10, 35, 41, 45, -45);   
 motor mujSmall( 3, 10./3, 19, 20, 21, 22, 0, 0,  9, 33, 39, 20, -20);  
@@ -48,8 +48,8 @@ void setup() {
     */
 
     // Initialize Pins
-    test.begin(test.aPin, test.bPin, test.invAPin, test.invBPin, test.upperLimitPin, test.lowerLimitPin, test.pwmPin, test.dir1Pin, test.dir2Pin);
-    // mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dir1Pin, mujBig.dir2Pin);
+    // test.begin(test.aPin, test.bPin, test.invAPin, test.invBPin, test.upperLimitPin, test.lowerLimitPin, test.pwmPin, test.dir1Pin, test.dir2Pin);
+    mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dir1Pin, mujBig.dir2Pin);
     // separateJ.begin(separateJ.aPin, separateJ.bPin, separateJ.invAPin, separateJ.invBPin, separateJ.upperLimitPin, separateJ.lowerLimitPin, separateJ.pwmPin, separateJ.dir1Pin, separateJ.dir2Pin);
     // mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dir1Pin, mujSmall.dir2Pin);
 
@@ -59,14 +59,14 @@ void setup() {
 
 void loop() {
     // Calculate position output
-    test.calcPosition();
-    // mujBig.calcPosition();
+    // test.calcPosition();
+    mujBig.calcPosition();
     // separateJ.calcPosition();
     // mujSmall.calcPosition();
 
     // Do haptics
-    test.calcTorqueOutput();
-    // mujBig.calcTorqueOutput();
+    // test.calcTorqueOutput();
+    mujBig.calcTorqueOutput();
     // separateJ.calcTorqueOutput();
     // mujSmall.calcTorqueOutput();
 

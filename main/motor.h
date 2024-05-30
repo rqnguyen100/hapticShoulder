@@ -94,7 +94,7 @@ private:
     const float resolution = 2; // dependent on number of interrupt pins used
 
     /*Motor Output*/
-    const int tarunFactor = 200;
+    const int tarunFactor = 150;
 };
 
 #endif

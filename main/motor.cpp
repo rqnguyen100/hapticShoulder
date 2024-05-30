@@ -51,7 +51,7 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
   pinMode(invBPin, INPUT);
 
   // pinMode(upperLimitPin, INPUT);
-  //  pinMode(lowerLimitPin, INPUT);
+  // pinMode(lowerLimitPin, INPUT);
 
   pinMode(pwmPin, OUTPUT);
   pinMode(dir1Pin, OUTPUT);
