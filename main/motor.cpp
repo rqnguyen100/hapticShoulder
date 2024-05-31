@@ -295,7 +295,7 @@ void motor::calcTorqueOutput(){
     motor::duty = 0;
   }   
 
-  motor::torqueOutput = (int)(motor::duty*50);   // convert duty cycle to output signal
+  motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
   if(motor::forceP < 0) {

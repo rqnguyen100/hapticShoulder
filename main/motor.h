@@ -91,6 +91,9 @@ private:
       aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
     */
     const float resolution = 2; // dependent on number of interrupt pins used
+
+    /*Motor Output*/
+    const int tarunFactor = 150;
 };
 
 #endif

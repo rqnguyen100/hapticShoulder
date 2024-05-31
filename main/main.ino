@@ -1,5 +1,7 @@
 #include "motor.h"
 
+unsigned long timestamp;
+
 /*
   intialize motor class with inputs
     - motorID
@@ -21,11 +23,9 @@
       - damper ratio (default = 0.35)
 */
 
-motor motor1(1, 10./3,  2, 6, 4, 5, 0, 0, 9, 10, 20, -20); // big basket
-motor motor2(2, 1,     18, 17, 16, 15, 0, 0, 11, 32, 45, -45); // humeral
-motor motor3(3, 10./3, 19, 20, 21, 22, 0, 0, 12, 33, 20, -20); // small basket
-
-unsigned long timestamp;
+motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
+motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 45, -45); // humeral
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small basket
 
 void setup() {
     // Begin serial monitor
@@ -46,31 +46,30 @@ void setup() {
     */
 
     // Initialize Pins
-    motor1.begin(motor1.aPin, motor1.bPin, motor1.invAPin, motor1.invBPin, motor1.upperLimitPin, motor1.lowerLimitPin, motor1.pwmPin, motor1.dirPin);
-    motor2.begin(motor2.aPin, motor2.bPin, motor2.invAPin, motor2.invBPin, motor2.upperLimitPin, motor2.lowerLimitPin, motor2.pwmPin, motor2.dirPin);
-    motor3.begin(motor3.aPin, motor3.bPin, motor3.invAPin, motor3.invBPin, motor3.upperLimitPin, motor3.lowerLimitPin, motor3.pwmPin, motor3.dirPin);
+    mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
+    // separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
+    mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
 
     // Calibrate Position
-    // motor1.calibratePosition();
+    // mujBig.calibratePosition();
 }
 
 void loop() {
-    // Calculate position output
-    motor1.calcPosition();
-    motor2.calcPosition();
-    motor3.calcPosition();
+    // Position Output
+    mujBig.calcPosition();
+    // separJ.calcPosition();
+    mujSmall.calcPosition();
 
-    // Do haptics
-    // motor1.calcTorqueOutput();
-    motor2.calcTorqueOutput();
-    // motor3.calcTorqueOutput();
+    // Haptic Feedback
+    mujBig.calcTorqueOutput();
+    // separJ.calcTorqueOutput();
+    mujSmall.calcTorqueOutput();
 
-    // timestamp = millis();
-
-    // // print position for logging purposes
-    // Serial.print(motor1.truePosition);
-    // Serial.print(", ");
-    // Serial.println(timestamp);
-        
-    // delay(10);
+    // Position Logging
+    timestamp = millis();
+    Serial.print(mujBig.position);
+    Serial.print(", ");
+    Serial.print(mujSmall.position);
+    Serial.print(", ");
+    Serial.println(timestamp);
 }
