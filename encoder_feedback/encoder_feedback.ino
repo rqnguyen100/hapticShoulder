@@ -1,6 +1,6 @@
 // Define Pins
 #define aPin 2 // interrupt pin
-#define bPin 3 // interrupt pin
+#define bPin 6 // interrupt pin
 #define invAPin 4
 #define invBPin 5
 
@@ -25,8 +25,8 @@ void setup() {
   // Initialize pin mode
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
-  // pinMode(invAPin, INPUT);
-  // pinMode(invBPin, INPUT);
+  pinMode(invAPin, INPUT);
+  pinMode(invBPin, INPUT);
   
   /*
     aPin Rising = 1x Resolution (B does not have to be connected to interrupt pin)
@@ -34,12 +34,12 @@ void setup() {
     aPin and bPin Change = 4x Resolution (B has to be connected to interrupt pin)
   */
   attachInterrupt(digitalPinToInterrupt(aPin), encoderAPulse, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulse, CHANGE);
+  // attachInterrupt(digitalPinToInterrupt(bPin), encoderBPulse, CHANGE);
 }
 
 void loop() {
   // Calculate shaft position
-  position = encoderCount * (360. / (CPR * 4));
+  position = encoderCount * (360. / (CPR * 2));
   Serial.println(position);
   delay(freq);
 }
@@ -48,12 +48,12 @@ void encoderAPulse() {
   // Read channels
   aState = digitalRead(aPin);
   bState = digitalRead(bPin);
-  // invAState = digitalRead(invAPin);
-  // invBState = digitalRead(invBPin);
+  invAState = digitalRead(invAPin);
+  invBState = digitalRead(invBPin);
 
   // Reconstruct signal to reduce noise
-  bool reconstructedA = aState; // && !invAState;
-  bool reconstructedB = bState; // && !invBState;
+  bool reconstructedA = aState && !invAState;
+  bool reconstructedB = bState && !invBState;
 
   // Determine direction based on A and B state
   if (reconstructedA){
@@ -78,12 +78,12 @@ void encoderBPulse() {
   // Read channels
   aState = digitalRead(aPin);
   bState = digitalRead(bPin);
-  // invAState = digitalRead(invAPin);
-  // invBState = digitalRead(invBPin);
+  invAState = digitalRead(invAPin);
+  invBState = digitalRead(invBPin);
 
   // Reconstruct signal to reduce noise
-  bool reconstructedA = aState; // && !invAState;
-  bool reconstructedB = bState; // && !invBState;
+  bool reconstructedA = aState && !invAState;
+  bool reconstructedB = bState && !invBState;
 
   // Determine direction based on A and B state
   if (reconstructedB){

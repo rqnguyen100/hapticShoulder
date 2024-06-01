@@ -1,13 +1,19 @@
 #include "motor.h"
 
+unsigned long timestamp;
+
 /*
   intialize motor class with inputs
     - motorID
     - gear ratio
-      - Disclaimer: must be float if not an integer
+      - Disclaimer: must be float or natural number
     - aPin (encoder A channel)
       - Disclaimer: must verify begin() switch statement is consistent with pins
     - bPin (encoder B channel)
+    - invAPin (encoder inverse A channel)
+    - invBPin (encoder inverse B channel)
+    - upperLimitPin [calibrate upper limit]
+    - lowerLimitPin [calibrate lower limit]
     - pwmPin (E1 speed control)
     - dirPin (M1 direction control)
     - upperLimit in deg (for free ROM) [has to be positive]
@@ -17,14 +23,17 @@
       - damper ratio (default = 0.35)
 */
 
-motor motor1(1, 10./3,  2,  3, 9, 10, 10, -10);
-motor motor2(2, 10./3, 19, 15, 7, 42, 20, -20);
-motor motor3(3, 1, 18, 14, 6, 43, 30, -30);
-
+motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
+motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 45, -45); // humeral
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small basket
 
 void setup() {
     // Begin serial monitor
     Serial.begin(9600);
+
+    // Velocity LED
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
 
     // Change PWM pin frequency to 20kHz
     /*
@@ -36,19 +45,31 @@ void setup() {
     TCCR4B |= 1;
     */
 
-    // Initialize
-    motor1.begin(motor1.aPin, motor1.bPin, motor1.pwmPin, motor1.dirPin);
-    motor2.begin(motor2.aPin, motor2.bPin, motor2.pwmPin, motor2.dirPin);
-    motor3.begin(motor3.aPin, motor3.bPin, motor3.pwmPin, motor3.dirPin);
+    // Initialize Pins
+    mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
+    // separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
+    mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
+
+    // Calibrate Position
+    // mujBig.calibratePosition();
 }
 
 void loop() {
-    // Calculate initial shaft position
-    motor1.calcPosition();
-    motor2.calcPosition();
-    motor3.calcPosition();
+    // Position Output
+    mujBig.calcPosition();
+    // separJ.calcPosition();
+    mujSmall.calcPosition();
 
-    motor1.calcTorqueOutput();
-    motor2.calcTorqueOutput();
-    motor3.calcTorqueOutput();
+    // Haptic Feedback
+    mujBig.calcTorqueOutput();
+    // separJ.calcTorqueOutput();
+    mujSmall.calcTorqueOutput();
+
+    // Position Logging
+    timestamp = millis();
+    Serial.print(mujBig.position);
+    Serial.print(", ");
+    Serial.print(mujSmall.position);
+    Serial.print(", ");
+    Serial.println(timestamp);
 }
