@@ -214,25 +214,23 @@ void motor::calcTorqueOutput(){
   int upperLimit = motor::upperLim;
   int lowerLimit = motor::lowerLim;
 
-  /*
-  // check for coupling
-  if (motor::motorID == 1 && abs(motor::position) > 45){
+  // check for coupling on separateJ
+  if (motor::motorID == 2 && abs(motor::position) > 10){
     motor::coupleBool = 1;
   }
-  else if (motor::motorID == 1){
+  else if (motor::motorID == 2){
     motor::coupleBool = 0;
   }
 
-  // perform coupling on motor 2
-  if (motor::motorID == 2 && motor::coupleBool){
-    upperLimit = 90;
-    lowerLimit = -90;
+  // perform coupling on motor 3
+  if (motor::motorID == 3 && motor::coupleBool){
+    upperLimit = 360;
+    lowerLimit = -360;
   }
-  else if (motor::motorID == 2){
-    upperLimit = 45;
-    lowerLimit = -45;
+  else if (motor::motorID == 3){
+    upperLimit = 10;
+    lowerLimit = -20;
   }
-  */
 
   // calculate handle position
   if (motor::position < lowerLimit){
