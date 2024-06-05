@@ -19,17 +19,26 @@ unsigned long timestamp;
     - upperLimit in deg (for free ROM) [has to be positive]
     - lowerLimit in deg (for free ROM) [has to be negative]
     [optional]
-      - spring constant (default = 10) 
+      - spring constant (default = 10)
       - damper ratio (default = 0.35)
 */
 
-motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
-motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 45, -45); // humeral
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small basket
+motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11,  30, -100); // big basket
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  10,  -20); // small baske1
+motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 180, -180); // humeral
 
 void setup() {
     // Begin serial monitor
     Serial.begin(9600);
+
+    // Print Headers
+    Serial.print("MUJ big basket position (deg)");
+    Serial.print(", ");
+    Serial.print("MUJ small basket position (deg)");
+    Serial.print(", ");
+    Serial.print("Separate joint position (deg)");
+    Serial.print(", ");
+    Serial.println("Time after start-up (ms)");
 
     // Velocity LED
     pinMode(LED_BUILTIN, OUTPUT);
@@ -47,7 +56,7 @@ void setup() {
 
     // Initialize Pins
     mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
-    // separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
+    separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
     mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
 
     // Calibrate Position
@@ -57,19 +66,23 @@ void setup() {
 void loop() {
     // Position Output
     mujBig.calcPosition();
-    // separJ.calcPosition();
+    separJ.calcPosition();
     mujSmall.calcPosition();
 
     // Haptic Feedback
-    mujBig.calcTorqueOutput();
-    // separJ.calcTorqueOutput();
+    // mujBig.calcTorqueOutput();
+    separJ.calcTorqueOutput();
     mujSmall.calcTorqueOutput();
 
     // Position Logging
-    timestamp = millis();
-    Serial.print(mujBig.position);
-    Serial.print(", ");
-    Serial.print(mujSmall.position);
-    Serial.print(", ");
-    Serial.println(timestamp);
+    // timestamp = millis();
+    // Serial.print(mujBig.position);
+    // Serial.print(", ");
+    // Serial.print(mujSmall.position);
+    // Serial.print(", ");
+    // Serial.print(separJ.position);
+    // Serial.print(", ");
+    // Serial.println(timestamp);
+
+    // delay(50);
 }
