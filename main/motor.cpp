@@ -53,6 +53,7 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
   // pinMode(upperLimitPin, INPUT);
   // pinMode(lowerLimitPin, INPUT);
 
+
   pinMode(pwmPin, OUTPUT);
   pinMode(dir1Pin, OUTPUT);
   pinMode(dir2Pin, OUTPUT);
@@ -249,18 +250,18 @@ void motor::calcTorqueOutput(){
   }
 
   // Position Limit
-  if (motor::position > 360){
-    digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
-  }
-  else if (motor::position < -360){
-    digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
-  }
+  // if (motor::position > 60){
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   while (true){
+  //     analogWrite(motor::pwmPin, 0);
+  //   }
+  // }
+  // else if (motor::position < -60){
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   while (true){
+  //     analogWrite(motor::pwmPin, 0);
+  //   }
+  // }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
   motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 
@@ -269,12 +270,12 @@ void motor::calcTorqueOutput(){
   motor::lastVh = motor::vh;
 
   // Velocity Limit
-  if (motor::vh > 20){
-    digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
-  }
+  // if (motor::vh > 20){
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   while (true){
+  //     analogWrite(motor::pwmPin, 0);
+  //   }
+  // }
 
   // Render a virtual spring
   motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
@@ -307,13 +308,13 @@ void motor::calcTorqueOutput(){
     analogWrite PWM = [0, 255]
   */
   if(motor::forceP < 0) {
-    digitalWrite(motor::dir1Pin, HIGH);
-    digitalWrite(motor::dir2Pin, LOW);
+    digitalWrite(motor::dir1Pin, LOW);
+    digitalWrite(motor::dir2Pin, HIGH);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   } 
   else {
-    digitalWrite(motor::dir1Pin, LOW);
-    digitalWrite(motor::dir2Pin, HIGH);
+    digitalWrite(motor::dir1Pin, HIGH);
+    digitalWrite(motor::dir2Pin, LOW);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   }
 }
