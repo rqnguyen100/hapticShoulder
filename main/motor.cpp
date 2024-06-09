@@ -215,22 +215,22 @@ void motor::calcTorqueOutput(){
   int lowerLimit = motor::lowerLim;
 
   // check for coupling on separateJ
-  if (motor::motorID == 2 && abs(motor::position) > 10){
-    motor::coupleBool = 1;
-  }
-  else if (motor::motorID == 2){
-    motor::coupleBool = 0;
-  }
+  // if (motor::motorID == 2 && abs(motor::position) > 10){
+  //   motor::coupleBool = 1;
+  // }
+  // else if (motor::motorID == 2){
+  //   motor::coupleBool = 0;
+  // }
 
-  // perform coupling on motor 3
-  if (motor::motorID == 3 && motor::coupleBool){
-    upperLimit = 360;
-    lowerLimit = -360;
-  }
-  else if (motor::motorID == 3){
-    upperLimit = 10;
-    lowerLimit = -20;
-  }
+  // // perform coupling on motor 3
+  // if (motor::motorID == 3 && motor::coupleBool){
+  //   upperLimit = 360;
+  //   lowerLimit = -360;
+  // }
+  // else if (motor::motorID == 3){
+  //   upperLimit = 10;
+  //   lowerLimit = -20;
+  // }
 
   // calculate handle position
   if (motor::position < lowerLimit){
@@ -246,13 +246,13 @@ void motor::calcTorqueOutput(){
   }
 
   // Position Limit
-  if (motor::position > 360){
+  if (motor::position > 90){
     digitalWrite(LED_BUILTIN, HIGH);
     while (true){
       analogWrite(motor::pwmPin, 0);
     }
   }
-  else if (motor::position < -360){
+  else if (motor::position < -90){
     digitalWrite(LED_BUILTIN, HIGH);
     while (true){
       analogWrite(motor::pwmPin, 0);
