@@ -23,22 +23,22 @@ unsigned long timestamp;
       - damper ratio (default = 0.35)
 */
 
-motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11,  30, -100); // big basket
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  10,  -20); // small baske1
-motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 180, -180); // humeral
+motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
+motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
 void setup() {
     // Begin serial monitor
     Serial.begin(9600);
 
     // Print Headers
-    Serial.print("MUJ big basket position (deg)");
-    Serial.print(", ");
-    Serial.print("MUJ small basket position (deg)");
-    Serial.print(", ");
-    Serial.print("Separate joint position (deg)");
-    Serial.print(", ");
-    Serial.println("Time after start-up (ms)");
+    // Serial.print("MUJ big basket position (deg)");
+    // Serial.print(", ");
+    // Serial.print("MUJ small basket position (deg)");
+    // Serial.print(", ");
+    // Serial.print("Separate joint position (deg)");
+    // Serial.print(", ");
+    // Serial.println("Time after start-up (ms)");
 
     // Velocity LED
     pinMode(LED_BUILTIN, OUTPUT);
@@ -66,19 +66,19 @@ void setup() {
 void loop() {
     // Position Output
     mujBig.calcPosition();
-    separJ.calcPosition();
-    mujSmall.calcPosition();
+    // separJ.calcPosition();
+    // mujSmall.calcPosition();
 
     // Haptic Feedback
-    // mujBig.calcTorqueOutput();
-    separJ.calcTorqueOutput();
-    mujSmall.calcTorqueOutput();
+    mujBig.calcTorqueOutput();
+    // separJ.calcTorqueOutput();
+    // mujSmall.calcTorqueOutput();
 
     // Position Logging
     // timestamp = millis();
-    // Serial.print(mujBig.position);
+    Serial.println(mujBig.position);
     // Serial.print(", ");
-    // Serial.print(mujSmall.position);
+    // Serial.println(mujSmall.position);
     // Serial.print(", ");
     // Serial.print(separJ.position);
     // Serial.print(", ");
