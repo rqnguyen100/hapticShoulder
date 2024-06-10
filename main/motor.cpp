@@ -237,31 +237,32 @@ void motor::calcTorqueOutput(){
   */
 
   // calculate handle position
-  if (motor::position < lowerLimit){
+  if (motor::position <= lowerLimit){
     motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
   }
-  else if (motor::position > upperLimit){
+  else if (motor::position >= upperLimit){
     motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
   }
   else{
     motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::torqueOutput = 0;
     // motor::truePosition = motor::position - motor::positionBias;
     return; // break function if in free ROM to save computational time
   }
 
   // Position Limit
-  // if (motor::position > 60){
-  //   digitalWrite(LED_BUILTIN, HIGH);
-  //   while (true){
-  //     analogWrite(motor::pwmPin, 0);
-  //   }
-  // }
-  // else if (motor::position < -60){
-  //   digitalWrite(LED_BUILTIN, HIGH);
-  //   while (true){
-  //     analogWrite(motor::pwmPin, 0);
-  //   }
-  // }
+  if (motor::position > 75){
+    digitalWrite(LED_BUILTIN, HIGH);
+    while (true){
+      analogWrite(motor::pwmPin, 0);
+    }
+  }
+  else if (motor::position < -75){
+    digitalWrite(LED_BUILTIN, HIGH);
+    while (true){
+      analogWrite(motor::pwmPin, 0);
+    }
+  }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
   motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 

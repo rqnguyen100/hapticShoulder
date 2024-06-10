@@ -27,7 +27,7 @@
 // motor separateJ(2,     1, 18, 17, 16, 15, 0, 0, 10, 35, 41, 45, -45);   
 // motor mujSmall( 3, 10./3, 19, 20, 21, 22, 0, 0,  9, 33, 39, 20, -20);  
 
-motor oneDOF(   1,     1,  2,  3,  4,  5, 0, 0,  9, 10, 11, 45, -45);
+motor oneDOF(   1,     1,  2,  3,  4,  5, 0, 0,  9, 10, 11, 30, -30);
  
 unsigned long timestamp;
 
@@ -79,16 +79,31 @@ void loop() {
     // mujSmall.calcTorqueOutput();
     oneDOF.calcTorqueOutput();
 
-    // timestamp = millis();
-
     // // Serial.println(separateJ.position);
 
     // // // print position for logging purposes
-    Serial.print(oneDOF.position);
-    Serial.print(", ");
-    Serial.print(oneDOF.forceP);
-    Serial.print(", ");
-    Serial.println(timestamp);
+    // Serial.print(oneDOF.position);
+    // Serial.print(", ");
+    
+    // Serial.print("Angle: ");
+    // Serial.print(oneDOF.position);
+    // Serial.print(", ");
+    // Serial.print("x_h: ");
+    // Serial.print(oneDOF.xh);
+    // Serial.print(", ");
+    // Serial.print("Torque output: ");
+    // Serial.print(oneDOF.torqueOutput);
+    // Serial.print(", ");
+    // Serial.print("Velocity: ");
+    // Serial.print(oneDOF.vh);
+    // Serial.print(", ");
+    // // Serial.print("forceP: ");
+    // // Serial.print(oneDOF.forceP);
+    // // Serial.print(", ");
+    // Serial.print("forceD: ");
+    // Serial.println(oneDOF.forceD);
+
+    // Serial.println(oneDOF.torqueOutput);
         
     // delay(10);
 }
