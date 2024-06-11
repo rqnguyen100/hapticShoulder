@@ -241,6 +241,7 @@ void motor::calcTorqueOutput(){
   }
   else{
     motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::torqueOutput = 0;
     // motor::truePosition = motor::position - motor::positionBias;
     return; // break function if in free ROM to save computational time
   }
