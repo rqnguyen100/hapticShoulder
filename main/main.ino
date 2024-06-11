@@ -21,7 +21,7 @@
       - spring constant (default = 10) 
       - damper ratio (default = 0.35)
 */
-motor oneDOF(   1,     1,  2,  3,  4,  5, 0, 0,  9, 10, 11, 30, -30);
+motor oneDOF(1, 1, 2, 3, 4, 5, 0, 0, 9, 10, 11, 30, -30, 10);
  
 unsigned long timestamp;
 
@@ -39,12 +39,12 @@ void setup() {
 
     // Change PWM pin frequency to 20kHz
     /*
+    TCCR0B &= ~7;
+    TCCR0B |= 1;
     TCCR1B &= ~7;
     TCCR1B |= 1;
     TCCR2B &= ~7;
     TCCR2B |= 1;
-    TCCR4B &= ~7;
-    TCCR4B |= 1;
     */
 
     // Initialize Pins

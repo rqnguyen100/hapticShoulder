@@ -271,12 +271,12 @@ void motor::calcTorqueOutput(){
   motor::lastVh = motor::vh;
 
   // Velocity Limit
-  // if (motor::vh > 20){
-  //   digitalWrite(LED_BUILTIN, HIGH);
-  //   while (true){
-  //     analogWrite(motor::pwmPin, 0);
-  //   }
-  // }
+  if (motor::vh > 5){
+    digitalWrite(LED_BUILTIN, HIGH);
+    while (true){
+      analogWrite(motor::pwmPin, 0);
+    }
+  }
 
   // Render a virtual spring
   motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
