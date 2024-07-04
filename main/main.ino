@@ -23,8 +23,8 @@ unsigned long timestamp;
       - damper ratio (default = 0.35)
 */
 
-motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
+motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11,  7, -187); // big basket
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  5, -50); // small baske1
 motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
 void setup() {
@@ -66,23 +66,23 @@ void setup() {
 void loop() {
     // Position Output
     mujBig.calcPosition();
-    // separJ.calcPosition();
-    // mujSmall.calcPosition();
+    separJ.calcPosition();
+    mujSmall.calcPosition();
 
     // Haptic Feedback
     mujBig.calcTorqueOutput();
-    // separJ.calcTorqueOutput();
-    // mujSmall.calcTorqueOutput();
+    separJ.calcTorqueOutput();
+    mujSmall.calcTorqueOutput();
 
     // Position Logging
     // timestamp = millis();
-    Serial.println(mujBig.position);
-    // Serial.print(", ");
-    // Serial.println(mujSmall.position);
-    // Serial.print(", ");
-    // Serial.print(separJ.position);
+    Serial.print(mujBig.position);
+    Serial.print(", ");
+    Serial.print(mujSmall.position);
+    Serial.print(", ");
+    Serial.println(separJ.position);
     // Serial.print(", ");
     // Serial.println(timestamp);
 
-    // delay(50);
+    delay(50);
 }

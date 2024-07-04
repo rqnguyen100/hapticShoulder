@@ -215,22 +215,22 @@ void motor::calcTorqueOutput(){
   int lowerLimit = motor::lowerLim;
 
   // check for coupling on separateJ
-  // if (motor::motorID == 2 && abs(motor::position) > 10){
-  //   motor::coupleBool = 1;
-  // }
-  // else if (motor::motorID == 2){
-  //   motor::coupleBool = 0;
-  // }
+  if (motor::motorID == 2 && abs(motor::position) > 10){
+    motor::coupleBool = 1;
+  }
+  else if (motor::motorID == 2){
+    motor::coupleBool = 0;
+  }
 
-  // // perform coupling on motor 3
-  // if (motor::motorID == 3 && motor::coupleBool){
-  //   upperLimit = 360;
-  //   lowerLimit = -360;
-  // }
-  // else if (motor::motorID == 3){
-  //   upperLimit = 10;
-  //   lowerLimit = -20;
-  // }
+  // perform coupling on motor 3
+  if (motor::motorID == 3 && motor::coupleBool){
+    upperLimit = 10;
+    lowerLimit = -100;
+  }
+  else if (motor::motorID == 3){
+    upperLimit = 5;
+    lowerLimit = -50;
+  }
 
   // calculate handle position
   if (motor::position < lowerLimit){
@@ -247,17 +247,13 @@ void motor::calcTorqueOutput(){
   }
 
   // Position Limit
-  if (motor::position > 90){
+  if (motor::position > 270){
     digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
+    analogWrite(motor::pwmPin, 0);
   }
-  else if (motor::position < -90){
+  else if (motor::position < -270){
     digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
+    analogWrite(motor::pwmPin, 0);
   }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
@@ -267,11 +263,9 @@ void motor::calcTorqueOutput(){
   motor::lastVh = motor::vh;
 
   // Velocity Limit
-  if (motor::vh > 20){
+  if (motor::vh > 15){
     digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
+    analogWrite(motor::pwmPin, 0);
   }
 
   // Render a virtual spring
