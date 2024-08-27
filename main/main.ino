@@ -23,9 +23,11 @@ unsigned long timestamp;
       - damper ratio (default = 0.35)
 */
 
-motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
-motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
+// motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
+// motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
+// motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
+
+motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 30, -30); 
 
 void setup() {
     // Begin serial monitor
@@ -54,10 +56,12 @@ void setup() {
     TCCR4B |= 1;
     */
 
-    // Initialize Pins
-    mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
-    separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
-    mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
+    // Initialize Pins 
+    // mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
+    // separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
+    // mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
+
+    oneDOF.begin(oneDOF.aPin, oneDOF.bPin, oneDOF.invAPin, oneDOF.invBPin, oneDOF.upperLimitPin, oneDOF.lowerLimitPin, oneDOF.pwmPin, oneDOF.dirPin);
 
     // Calibrate Position
     // mujBig.calibratePosition();
@@ -65,24 +69,33 @@ void setup() {
 
 void loop() {
     // Position Output
-    mujBig.calcPosition();
+    // mujBig.calcPosition();
     // separJ.calcPosition();
     // mujSmall.calcPosition();
 
+    oneDOF.calcPosition();
+
     // Haptic Feedback
-    mujBig.calcTorqueOutput();
+    // mujBig.calcTorqueOutput();
     // separJ.calcTorqueOutput();
     // mujSmall.calcTorqueOutput();
 
+    oneDOF.calcTorqueOutput();
+
     // Position Logging
-    // timestamp = millis();
-    Serial.println(mujBig.position);
+    timestamp = millis();
+    Serial.print("Time elapsed (ms): ");
+    Serial.print(timestamp);
+    Serial.print(", ");
+    Serial.print("Angle: ");
+    Serial.print(oneDOF.position);
+    Serial.print(", ");
+    Serial.print("Theoretical Motor Torque: ");
+    Serial.println(oneDOF.Tm);
     // Serial.print(", ");
-    // Serial.println(mujSmall.position);
-    // Serial.print(", ");
-    // Serial.print(separJ.position);
-    // Serial.print(", ");
-    // Serial.println(timestamp);
+    // Serial.print("Motor Torque Command: ");
+    // Serial.println(oneDOF.torqueOutput);
+    
 
     // delay(50);
 }

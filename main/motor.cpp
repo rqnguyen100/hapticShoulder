@@ -297,12 +297,12 @@ void motor::calcTorqueOutput(){
   motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
-  if(motor::forceP < 0) {
-    digitalWrite(motor::dirPin, HIGH);
-    analogWrite(motor::pwmPin, motor::torqueOutput);
-  } 
-  else {
-    digitalWrite(motor::dirPin, LOW);
-    analogWrite(motor::pwmPin, motor::torqueOutput);
-  }
+  // if(motor::forceP < 0) {
+  //   digitalWrite(motor::dirPin, HIGH);
+  //   analogWrite(motor::pwmPin, motor::torqueOutput);
+  // } 
+  // else {
+  //   digitalWrite(motor::dirPin, LOW);
+  //   analogWrite(motor::pwmPin, motor::torqueOutput);
+  // }
 }
