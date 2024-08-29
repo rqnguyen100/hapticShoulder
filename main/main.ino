@@ -83,18 +83,21 @@ void loop() {
     oneDOF.calcTorqueOutput();
 
     // Position Logging
-    timestamp = millis();
-    Serial.print("Time elapsed (ms): ");
-    Serial.print(timestamp);
-    Serial.print(", ");
+    // timestamp = millis();
+    // Serial.print("Time elapsed (ms): ");
+    // Serial.print(timestamp);
+    // Serial.print(", ");
     Serial.print("Angle: ");
     Serial.print(oneDOF.position);
     Serial.print(", ");
-    Serial.print("Theoretical Motor Torque: ");
-    Serial.println(oneDOF.Tm);
+    Serial.print("Disp: ");
+    Serial.print(oneDOF.xh);
+    Serial.print(", ");
+    // Serial.print("Theoretical Motor Torque: ");
+    // Serial.print(oneDOF.Tm);
     // Serial.print(", ");
-    // Serial.print("Motor Torque Command: ");
-    // Serial.println(oneDOF.torqueOutput);
+    Serial.print("Motor Torque Command: ");
+    Serial.println(oneDOF.torqueOutput);
     
 
     // delay(50);

@@ -241,7 +241,9 @@ void motor::calcTorqueOutput(){
   }
   else{
     motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::xh = 0;
     motor::torqueOutput = 0;
+    // analogWrite(motor::pwmPin, 0);
     // motor::truePosition = motor::position - motor::positionBias;
     return; // break function if in free ROM to save computational time
   }
@@ -297,12 +299,12 @@ void motor::calcTorqueOutput(){
   motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
-  // if(motor::forceP < 0) {
-  //   digitalWrite(motor::dirPin, HIGH);
-  //   analogWrite(motor::pwmPin, motor::torqueOutput);
-  // } 
-  // else {
-  //   digitalWrite(motor::dirPin, LOW);
-  //   analogWrite(motor::pwmPin, motor::torqueOutput);
-  // }
+  if(motor::forceP < 0) {
+    digitalWrite(motor::dirPin, HIGH);
+    analogWrite(motor::pwmPin, motor::torqueOutput);
+  } 
+  else {
+    digitalWrite(motor::dirPin, LOW);
+    analogWrite(motor::pwmPin, motor::torqueOutput);
+  }
 }
