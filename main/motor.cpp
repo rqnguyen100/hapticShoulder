@@ -83,63 +83,63 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
   }
 } 
 
-void motor::calibratePosition(){
-    bool upperSet = 1;
-    bool lowerSet = 1;
+// void motor::calibratePosition(){
+//     bool upperSet = 1;
+//     bool lowerSet = 1;
 
-    while (upperSet){
-      if (digitalRead(motor::upperLimitPin)) {
-        upperSet = 0;
-        motor::calibratedUpperLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-        //Serial.println("Calibrated Upper Limit");
-        }
-      else {
-        //Serial.println("Move arm to upper limit switch...");
-        }
+//     while (upperSet){
+//       if (digitalRead(motor::upperLimitPin)) {
+//         upperSet = 0;
+//         motor::calibratedUpperLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+//         //Serial.println("Calibrated Upper Limit");
+//         }
+//       else {
+//         //Serial.println("Move arm to upper limit switch...");
+//         }
 
-      delay(10);
-    }
+//       delay(10);
+//     }
 
-    while (lowerSet){
-      if (digitalRead(motor::lowerLimitPin)) {
-        lowerSet = 0;
-        motor::calibratedLowerLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-        //Serial.println("Calibrated Lower Limit");
-        }
-      else{
-        //Serial.println("Move arm to lower limit switch...");
-        }
+//     while (lowerSet){
+//       if (digitalRead(motor::lowerLimitPin)) {
+//         lowerSet = 0;
+//         motor::calibratedLowerLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+//         //Serial.println("Calibrated Lower Limit");
+//         }
+//       else{
+//         //Serial.println("Move arm to lower limit switch...");
+//         }
 
-      delay(10);
-    }
+//       delay(10);
+//     }
 
-  motor::positionBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
+//   motor::positionBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
 
-  delay(5000);
-  /*
-  while (true) {
-    Serial.println("Return arm to free range and press enter...");
-    delay(100);
+//   delay(5000);
+//   /*
+//   while (true) {
+//     Serial.println("Return arm to free range and press enter...");
+//     delay(100);
 
-    if (Serial.available() > 0) {
-      char c = Serial.read();
+//     if (Serial.available() > 0) {
+//       char c = Serial.read();
 
-      // Check if the received character is newline (Enter key)
-      if (c == '\n') {
-        Serial.println("Enter pressed. Loading program...");
-        Serial.print("[");
-        for (int i = 0; i < 10; i++) {
-          Serial.print("█");
-          delay(250);
-          }
-        Serial.println("]");
-        delay(1000);
-        break;
-      }
-    }
-  }
-  */
-}
+//       // Check if the received character is newline (Enter key)
+//       if (c == '\n') {
+//         Serial.println("Enter pressed. Loading program...");
+//         Serial.print("[");
+//         for (int i = 0; i < 10; i++) {
+//           Serial.print("█");
+//           delay(250);
+//           }
+//         Serial.println("]");
+//         delay(1000);
+//         break;
+//       }
+//     }
+//   }
+//   */
+// }
 
 void motor::calcPosition() {
   motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
@@ -235,16 +235,14 @@ void motor::calcTorqueOutput(){
   // calculate handle position
   if (motor::position < lowerLimit){
     motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
+    // Serial.print("position in left end ROM");
   }
   else if (motor::position > upperLimit){
     motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
+    // Serial.print("position in right end ROM");
   }
   else{
-    motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
     motor::xh = 0;
-    motor::torqueOutput = 0;
-    // analogWrite(motor::pwmPin, 0);
-    // motor::truePosition = motor::position - motor::positionBias;
     return; // break function if in free ROM to save computational time
   }
 
@@ -263,13 +261,14 @@ void motor::calcTorqueOutput(){
   }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
+
   motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 
   motor::lastXh = motor::xh;
   motor::lastLastVh = motor::lastVh;
   motor::lastVh = motor::vh;
 
   // Velocity Limit
-  if (motor::vh > 20){
+  if (motor::vh > 5){
     digitalWrite(LED_BUILTIN, HIGH);
     while (true){
       analogWrite(motor::pwmPin, 0);
@@ -287,6 +286,7 @@ void motor::calcTorqueOutput(){
 
   // Compute the duty cycle required to generate Tp (torque at the motor pulley)
   motor::duty = sqrt(abs(motor::Tm)/0.03);
+
   
   // Make sure the duty cycle is between 0 and 100%
   if (motor::duty > 1) {            
@@ -303,7 +303,7 @@ void motor::calcTorqueOutput(){
     digitalWrite(motor::dirPin, HIGH);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   } 
-  else {
+  else{
     digitalWrite(motor::dirPin, LOW);
     analogWrite(motor::pwmPin, motor::torqueOutput);
   }
