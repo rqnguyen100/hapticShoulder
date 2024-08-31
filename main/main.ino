@@ -27,7 +27,7 @@ unsigned long timestamp;
 // motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
 // motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
-motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 30, -30); 
+motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 30, -30, 5); 
 
 void setup() {
     // Begin serial monitor
@@ -47,14 +47,13 @@ void setup() {
     digitalWrite(LED_BUILTIN, LOW);
 
     // Change PWM pin frequency to 20kHz
-    /*
     TCCR1B &= ~7;
     TCCR1B |= 1;
     TCCR2B &= ~7;
     TCCR2B |= 1;
     TCCR4B &= ~7;
     TCCR4B |= 1;
-    */
+    
 
     // Initialize Pins 
     // mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
@@ -83,19 +82,19 @@ void loop() {
     oneDOF.calcTorqueOutput();
 
     // Position Logging
-    // timestamp = millis();
-    // Serial.print("Time elapsed (ms): ");
-    // Serial.print(timestamp);
+    timestamp = millis();
+    Serial.print("Time since startup (ms): ");
+    Serial.print(timestamp);
+    Serial.print(", ");
+    Serial.print("Angle: ");
+    Serial.print(oneDOF.position);
+    Serial.print(", ");
+    Serial.print("Displacement [m]: ");
+    Serial.println(oneDOF.xh);
     // Serial.print(", ");
-    // Serial.print("Angle: ");
-    // Serial.print(oneDOF.position);
+    // Serial.print("Theoretical Motor Torque: ");
+    // Serial.print(oneDOF.Tm);
     // Serial.print(", ");
-    // Serial.print("Disp: ");
-    // Serial.print(oneDOF.xh);
-    // Serial.print(", ");
-    // // Serial.print("Theoretical Motor Torque: ");
-    // // Serial.print(oneDOF.Tm);
-    // // Serial.print(", ");
     // Serial.print("Motor Torque Command: ");
     // Serial.println(oneDOF.torqueOutput);
     // Serial.print(oneDOF.torqueOutput); Serial.print(" "); Serial.print(oneDOF.xh, 5); Serial.print(" "); Serial.println(oneDOF.forceP, 5);

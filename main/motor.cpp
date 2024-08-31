@@ -243,22 +243,22 @@ void motor::calcTorqueOutput(){
   }
   else{
     motor::xh = 0;
-    return; // break function if in free ROM to save computational time
+    // return; // break function if in free ROM to save computational time
   }
 
   // Position Limit
-  if (motor::position > 90){
-    digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
-  }
-  else if (motor::position < -90){
-    digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
-  }
+  // if (motor::position > 90){
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   while (true){
+  //     analogWrite(motor::pwmPin, 0);
+  //   }
+  // }
+  // else if (motor::position < -90){
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   while (true){
+  //     analogWrite(motor::pwmPin, 0);
+  //   }
+  // }
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
 
