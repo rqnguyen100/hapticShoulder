@@ -27,7 +27,7 @@ unsigned long timestamp;
 // motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
 // motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
-motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 30, -30, 5); 
+motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 5); 
 
 void setup() {
     // Begin serial monitor
@@ -62,6 +62,9 @@ void setup() {
 
     oneDOF.begin(oneDOF.aPin, oneDOF.bPin, oneDOF.invAPin, oneDOF.invBPin, oneDOF.upperLimitPin, oneDOF.lowerLimitPin, oneDOF.pwmPin, oneDOF.dirPin);
 
+    Serial.print("Time since startup (ms)");
+    Serial.print(", ");
+    Serial.println("Angle (deg)");
     // Calibrate Position
     // mujBig.calibratePosition();
 }
@@ -83,14 +86,10 @@ void loop() {
 
     // Position Logging
     timestamp = millis();
-    Serial.print("Time since startup (ms): ");
+   
     Serial.print(timestamp);
     Serial.print(", ");
-    Serial.print("Angle: ");
-    Serial.print(oneDOF.position);
-    Serial.print(", ");
-    Serial.print("Displacement [m]: ");
-    Serial.println(oneDOF.xh);
+    Serial.println(oneDOF.position);
     // Serial.print(", ");
     // Serial.print("Theoretical Motor Torque: ");
     // Serial.print(oneDOF.Tm);
