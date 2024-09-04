@@ -1,6 +1,7 @@
 #include "motor.h"
 
-unsigned long timestamp;
+unsigned long previousMillis = 0;  // Store the last time the data was sent
+const long interval = 100;          // Interval at which to send data (15 ms)
 
 /*
   intialize motor class with inputs
@@ -85,18 +86,19 @@ void loop() {
     oneDOF.calcTorqueOutput();
 
     // Position Logging
-    timestamp = millis();
+    unsigned long currentMillis = millis();  // Get the current time
+
+    if (currentMillis - previousMillis >= interval){
+      // Save the last time data was sent
+      previousMillis = currentMillis;
+
+      Serial.print(currentMillis);
+      Serial.print(", ");
+      Serial.println(oneDOF.position);
+    }
    
-    Serial.print(timestamp);
-    Serial.print(", ");
-    Serial.println(oneDOF.position);
-    // Serial.print(", ");
-    // Serial.print("Theoretical Motor Torque: ");
-    // Serial.print(oneDOF.Tm);
-    // Serial.print(", ");
-    // Serial.print("Motor Torque Command: ");
-    // Serial.println(oneDOF.torqueOutput);
-    // Serial.print(oneDOF.torqueOutput); Serial.print(" "); Serial.print(oneDOF.xh, 5); Serial.print(" "); Serial.println(oneDOF.forceP, 5);
+
+
 
     
 
