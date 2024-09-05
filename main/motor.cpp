@@ -277,24 +277,20 @@ void motor::calcTorqueOutput(){
 
 
   // Render a virtual spring (linear spring)
-  motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
+  // motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
   
   // Render a virtual spring (non-linear spring)
-  Kp = (36*pow((motor::xh-0.80833),2) + 58.2*(motor::xh-0.80833) - 15.3) + 38.8225; // non-linear tendon stiffness translated to (0,0) 
-  motor::tempforceP = -KpScaling*Kp*motor::xh; // Resistive spring force
+  // Kp = (36*pow((motor::xh-0.80833),2) + 58.2*(motor::xh-0.80833) - 15.3) + 38.8225; // non-linear tendon stiffness translated to (0,0) 
+  motor::forceP = 36*pow(motor::xh, 3.0) + 58.2*pow(motor::xh, 2.0) - 15.3*motor::xh; // Resistive spring force
   
   // Render a damper
   motor::forceD = -motor::bDamper*motor::vh;
 
   // Calculate motor torque needed to produce desired resistive force 
-  motor::Tm = rh*(motor::forceP - motor::forceD);  
-
-  // Temporary torque calc for non-liear spring
-  motor::tempTm = rh*(motor::tempforceP - motor::forceD);  
+  motor::Tm = rh*(motor::forceP - motor::forceD);    
 
   // Compute the duty cycle required to generate Tp (torque at the motor pulley)
   motor::duty = sqrt(abs(motor::Tm)/0.03);
-
   
   // Make sure the duty cycle is between 0 and 100%
   if (motor::duty > 1) {            

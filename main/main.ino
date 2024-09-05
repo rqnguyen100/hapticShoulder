@@ -48,12 +48,12 @@ void setup() {
     digitalWrite(LED_BUILTIN, LOW);
 
     // Change PWM pin frequency to 20kHz
-    // TCCR1B &= ~7;
-    // TCCR1B |= 1;
-    // TCCR2B &= ~7;
-    // TCCR2B |= 1;
-    // TCCR4B &= ~7;
-    // TCCR4B |= 1;
+    TCCR1B &= ~7;
+    TCCR1B |= 1;
+    TCCR2B &= ~7;
+    TCCR2B |= 1;
+    TCCR4B &= ~7;
+    TCCR4B |= 1;
     
 
     // Initialize Pins 
@@ -63,9 +63,18 @@ void setup() {
 
     oneDOF.begin(oneDOF.aPin, oneDOF.bPin, oneDOF.invAPin, oneDOF.invBPin, oneDOF.upperLimitPin, oneDOF.lowerLimitPin, oneDOF.pwmPin, oneDOF.dirPin);
 
-    Serial.print("Time since startup (ms)");
+    // Serial.print("Time since startup (ms)");
+    // Serial.print(", ");
+    Serial.print("Angle (deg)");
     Serial.print(", ");
-    Serial.println("Angle (deg)");
+    Serial.print("ForceP");
+    Serial.print(", ");
+    Serial.print("Displacement");
+    Serial.print(", ");
+    Serial.println("Torque Output");
+    
+
+
     // Calibrate Position
     // mujBig.calibratePosition();
 }
@@ -96,12 +105,11 @@ void loop() {
       // Serial.print(", ");
       Serial.print(oneDOF.position);
       Serial.print(", ");
-      Serial.print(oneDOF.xh, 4);
+      Serial.print(oneDOF.forceP, 4);    
       Serial.print(", ");
-      Serial.print(oneDOF.Tm, 4);
+      Serial.print(oneDOF.xh, 5);
       Serial.print(", ");
-      Serial.println(oneDOF.tempTm, 7);
-      
+      Serial.println(oneDOF.torqueOutput);  
     }
    
 
