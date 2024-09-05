@@ -48,12 +48,12 @@ void setup() {
     digitalWrite(LED_BUILTIN, LOW);
 
     // Change PWM pin frequency to 20kHz
-    TCCR1B &= ~7;
-    TCCR1B |= 1;
-    TCCR2B &= ~7;
-    TCCR2B |= 1;
-    TCCR4B &= ~7;
-    TCCR4B |= 1;
+    // TCCR1B &= ~7;
+    // TCCR1B |= 1;
+    // TCCR2B &= ~7;
+    // TCCR2B |= 1;
+    // TCCR4B &= ~7;
+    // TCCR4B |= 1;
     
 
     // Initialize Pins 
@@ -92,9 +92,16 @@ void loop() {
       // Save the last time data was sent
       previousMillis = currentMillis;
 
-      Serial.print(currentMillis);
+      // Serial.print(currentMillis);
+      // Serial.print(", ");
+      Serial.print(oneDOF.position);
       Serial.print(", ");
-      Serial.println(oneDOF.position);
+      Serial.print(oneDOF.xh, 4);
+      Serial.print(", ");
+      Serial.print(oneDOF.Tm, 4);
+      Serial.print(", ");
+      Serial.println(oneDOF.tempTm, 7);
+      
     }
    
 

@@ -40,6 +40,10 @@ public:
     const int bDamper;
     const int upperLim;
     const int lowerLim;
+    volatile double Kp;              // non-linear stiffness equation
+    const double KpScaling = 1;          // scaling factor to scale down coefficients of non-linear tendon stiffness eqn 
+
+    
 
     /*Kinematic Variables*/
     const double rh = 0.05;          // [meters] length of lever arm (this is currently wrong and needs to be updated)
@@ -49,12 +53,15 @@ public:
     volatile double lastVh = 0;      // last velocity of the handle
     volatile double lastLastVh = 0;  // last last velocity of the handle
     volatile double Tm = 0;          // torque
+    volatile double tempTm = 0;       // temp torque value for nonlinear spring calcs
 
     /*Haptic Variables*/
     volatile double forceP = 0;
+    volatile double tempforceP = 0;   // temp force value for nonlinear spring calcs
     volatile double forceD = 0;
     volatile double duty = 0;
     volatile double torqueOutput = 0;
+    
 
     /*Coupling Variables*/
     static bool coupleBool;
