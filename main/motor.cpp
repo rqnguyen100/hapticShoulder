@@ -280,8 +280,9 @@ void motor::calcTorqueOutput(){
   // motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
   
   // Render a virtual spring (non-linear spring)
-  // Kp = (36*pow((motor::xh-0.80833),2) + 58.2*(motor::xh-0.80833) - 15.3) + 38.8225; // non-linear tendon stiffness translated to (0,0) 
-  motor::forceP = 36*pow(motor::xh, 3.0) + 58.2*pow(motor::xh, 2.0) - 15.3*motor::xh; // Resistive spring force
+  // Kp = (36*pow((motor::xh-0.80833),2) + 58.2*(motor::xh-0.80833) - 15.3) + 38.8225; 
+  Kp = 36*pow(motor::xh*1000, 2) + 58.2*(motor::xh*1000) - 15.3;
+  motor::forceP = -scalingFactor*Kp*(motor::xh*1000); // Resistive spring force
   
   // Render a damper
   motor::forceD = -motor::bDamper*motor::vh;
@@ -303,12 +304,12 @@ void motor::calcTorqueOutput(){
   motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
-  // if(motor::forceP < 0) {
-  //   digitalWrite(motor::dirPin, HIGH);
-  //   analogWrite(motor::pwmPin, motor::torqueOutput);
-  // } 
-  // else{
-  //   digitalWrite(motor::dirPin, LOW);
-  //   analogWrite(motor::pwmPin, motor::torqueOutput);
-  // }
+  if(motor::forceP < 0) {
+    digitalWrite(motor::dirPin, HIGH);
+    analogWrite(motor::pwmPin, motor::torqueOutput);
+  } 
+  else{
+    digitalWrite(motor::dirPin, LOW);
+    analogWrite(motor::pwmPin, motor::torqueOutput);
+  }
 }

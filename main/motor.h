@@ -41,12 +41,12 @@ public:
     const int upperLim;
     const int lowerLim;
     volatile double Kp;              // non-linear stiffness equation
-    const double KpScaling = 1;          // scaling factor to scale down coefficients of non-linear tendon stiffness eqn 
+    const double scalingFactor = 0.000001;          // scaling factor to scale down coefficients of non-linear tendon stiffness eqn 
 
     
 
     /*Kinematic Variables*/
-    const double rh = 0.05;          // [meters] length of lever arm (this is currently wrong and needs to be updated)
+    const double rh = .050;          // [millimeters] length of lever arm (this is currently wrong and needs to be updated)
     volatile double xh = 0;          // x position of handle
     volatile double lastXh = 0;      // last x position of the handle
     volatile double vh = 0;          // velocity of the handle

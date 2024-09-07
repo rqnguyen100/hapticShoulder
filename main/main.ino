@@ -63,15 +63,13 @@ void setup() {
 
     oneDOF.begin(oneDOF.aPin, oneDOF.bPin, oneDOF.invAPin, oneDOF.invBPin, oneDOF.upperLimitPin, oneDOF.lowerLimitPin, oneDOF.pwmPin, oneDOF.dirPin);
 
-    // Serial.print("Time since startup (ms)");
-    // Serial.print(", ");
-    Serial.print("Angle (deg)");
+    Serial.print("Time since startup (ms)");
     Serial.print(", ");
-    Serial.print("ForceP");
+    Serial.print("Angle (deg)");
     Serial.print(", ");
     Serial.print("Displacement");
     Serial.print(", ");
-    Serial.println("Torque Output");
+    Serial.println("Torque PWM");
     
 
 
@@ -101,11 +99,9 @@ void loop() {
       // Save the last time data was sent
       previousMillis = currentMillis;
 
-      // Serial.print(currentMillis);
-      // Serial.print(", ");
-      Serial.print(oneDOF.position);
+      Serial.print(currentMillis);
       Serial.print(", ");
-      Serial.print(oneDOF.forceP, 4);    
+      Serial.print(oneDOF.position);
       Serial.print(", ");
       Serial.print(oneDOF.xh, 5);
       Serial.print(", ");
