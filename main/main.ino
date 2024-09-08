@@ -24,7 +24,7 @@ unsigned long timestamp;
 */
 
 // motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11,  7, -187); // big basket
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  90, -15); // small baske1
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  90, -15, 35); // small baske1
 motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
 void setup() {
@@ -47,12 +47,12 @@ void setup() {
     // Change PWM pin frequency to 20kHz
     
     
-    TCCR1B &= ~7;
-    TCCR1B |= 1;
-    TCCR2B &= ~7;
-    TCCR2B |= 1;
-    TCCR4B &= ~7;
-    TCCR4B |= 1;
+    // TCCR1B &= ~7;
+    // TCCR1B |= 1;
+    // TCCR2B &= ~7;
+    // TCCR2B |= 1;
+    // TCCR4B &= ~7;
+    // TCCR4B |= 1;
     
   
 
@@ -63,6 +63,14 @@ void setup() {
 
     // Calibrate Position
     // mujBig.calibratePosition();
+
+    Serial.print("Humeral Angle (deg)");
+    Serial.print(", ");
+    Serial.print("Abduction Angle (deg)");
+    Serial.print(", ");
+    Serial.print("PWM Torque");
+    Serial.print(", ");
+    Serial.println("Elapsed Time (ms)");
 }
 
 void loop() {
@@ -77,16 +85,15 @@ void loop() {
     mujSmall.calcTorqueOutput();
 
     // Position Logging
-    // timestamp = millis();
-    // Serial.print(mujBig.position);
-    // Serial.print(", ");
+    timestamp = millis();
+
+    Serial.print(separJ.position);
+    Serial.print(", ");
     Serial.print(mujSmall.position);
     Serial.print(", ");
     Serial.print(mujSmall.torqueOutput);
     Serial.print(", ");
-    Serial.println(separJ.position);
-    // Serial.print(", ");
-    // Serial.println(timestamp);
+    Serial.println(timestamp);
 
     delay(50);
 }
