@@ -215,7 +215,7 @@ void motor::calcTorqueOutput(){
   int lowerLimit = motor::lowerLim;
 
   // check for coupling on separateJ
-  if (motor::motorID == 2 && abs(motor::position) > 10){
+  if (motor::motorID == 2 && abs(motor::position) >= 90){  // CHANGE 90 TO MINIMUM DESIRED HUMERAL ROTATION TO UNLOCK LARGER ROM
     motor::coupleBool = 1;
   }
   else if (motor::motorID == 2){
@@ -224,12 +224,12 @@ void motor::calcTorqueOutput(){
 
   // perform coupling on motor 3
   if (motor::motorID == 3 && motor::coupleBool){
-    upperLimit = 10;
-    lowerLimit = -100;
+    upperLimit = 135; // CHANGE TO DESIRED NEW UPPER LIMIT IF HUMERAL JOINT IS ROTATED 
+    lowerLimit = -15;
   }
   else if (motor::motorID == 3){
-    upperLimit = 5;
-    lowerLimit = -50;
+    upperLimit = 90; // LIMITS REMAIN UNCHANGED IF HUMERAL JOINT IS NOT ROTATED (NO COUPLING)
+    lowerLimit = -15;
   }
 
   // calculate handle position
@@ -240,10 +240,11 @@ void motor::calcTorqueOutput(){
     motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
   }
   else{
-    motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-    motor::torqueOutput = 0;
+    // motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
+    motor::xh = 0;
+    // motor::torqueOutput = 0;
     // motor::truePosition = motor::position - motor::positionBias;
-    return; // break function if in free ROM to save computational time
+    // return; // break function if in free ROM to save computational time
   }
 
   // Position Limit
@@ -263,7 +264,7 @@ void motor::calcTorqueOutput(){
   motor::lastVh = motor::vh;
 
   // Velocity Limit
-  if (motor::vh > 15){
+  if (motor::vh > 5){
     digitalWrite(LED_BUILTIN, HIGH);
     analogWrite(motor::pwmPin, 0);
   }
