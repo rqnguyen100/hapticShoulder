@@ -24,7 +24,7 @@ unsigned long timestamp;
 */
 
 // motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11,  7, -187); // big basket
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  90, -15, 35); // small baske1
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  90, -15, 10); // small baske1
 motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
 void setup() {
@@ -64,13 +64,20 @@ void setup() {
     // Calibrate Position
     // mujBig.calibratePosition();
 
+
+
     Serial.print("Humeral Angle (deg)");
     Serial.print(", ");
     Serial.print("Abduction Angle (deg)");
     Serial.print(", ");
     Serial.print("PWM Torque");
     Serial.print(", ");
+    // Serial.print("Spring Force");
+    // Serial.print(", ");
+    // Serial.print("Damping Force");
+    // Serial.print(", ");
     Serial.println("Elapsed Time (ms)");
+
 }
 
 void loop() {
@@ -87,13 +94,19 @@ void loop() {
     // Position Logging
     timestamp = millis();
 
+
     Serial.print(separJ.position);
     Serial.print(", ");
     Serial.print(mujSmall.position);
     Serial.print(", ");
     Serial.print(mujSmall.torqueOutput);
     Serial.print(", ");
+    // Serial.print(mujSmall.forceP);
+    // Serial.print(", ");
+    // Serial.print(mujSmall.forceD);
+    // Serial.print(", ");
     Serial.println(timestamp);
+  
 
     delay(50);
 }

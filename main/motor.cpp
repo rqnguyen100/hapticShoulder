@@ -235,9 +235,11 @@ void motor::calcTorqueOutput(){
   // calculate handle position
   if (motor::position < lowerLimit){
     motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
+    // motor::xh = 2*rh*sin((motor::position-lowerLimit)/2)*(3.14/180);
   }
   else if (motor::position > upperLimit){
     motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
+    // motor::xh = 2*rh*sin((motor::position-upperLimit)/2)*(3.14/180);
   }
   else{
     // motor::position = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
@@ -270,8 +272,13 @@ void motor::calcTorqueOutput(){
   }
 
   // Render a virtual spring
-  motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
-  
+  // motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
+
+  // Render a virtual spring (non-linear spring)
+  Kp = 36*pow(motor::xh*1000, 2) + 58.2*(motor::xh*1000) - 15.3;
+  motor::forceP = -scalingFactor*Kp*(motor::xh*1000); // Resistive spring force
+
+
   // Render a damper
   motor::forceD = -motor::bDamper*motor::vh;
 
@@ -292,12 +299,12 @@ void motor::calcTorqueOutput(){
   motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
-  if(motor::forceP < 0) {
-    digitalWrite(motor::dirPin, HIGH);
-    analogWrite(motor::pwmPin, motor::torqueOutput);
-  } 
-  else {
-    digitalWrite(motor::dirPin, LOW);
-    analogWrite(motor::pwmPin, motor::torqueOutput);
-  }
+  // if(motor::forceP < 0) {
+  //   digitalWrite(motor::dirPin, HIGH);
+  //   analogWrite(motor::pwmPin, motor::torqueOutput);
+  // } 
+  // else {
+  //   digitalWrite(motor::dirPin, LOW);
+  //   analogWrite(motor::pwmPin, motor::torqueOutput);
+  // }
 }

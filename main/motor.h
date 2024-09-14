@@ -40,6 +40,9 @@ public:
     const int bDamper;
     const int upperLim;
     const int lowerLim;
+    volatile double Kp;         // non-linear stiffness equation 
+    const double scalingFactor = 0.000001;    // scaling factor to scale down coefficients of non-linear tendon stiffness eqn 
+
 
     /*Kinematic Variables*/
     const double rh = 0.05;          // [meters] length of lever arm (this is currently wrong and needs to be updated)
