@@ -28,7 +28,7 @@ const long interval = 100;          // Interval at which to send data (15 ms)
 // motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
 // motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
-motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 5); 
+motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 35); 
 
 void setup() {
     // Begin serial monitor
