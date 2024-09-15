@@ -21,7 +21,8 @@ public:
     volatile bool reconstructedA;
     volatile bool reconstructedB;
     volatile double encoderCount;
-    volatile double position;
+    volatile double position;   // old variable for angular position in degrees 
+    volatile double theta;      // new variable for angular position in degrees
     volatile double truePosition;
 
     /*Attributes Relating to Limit Switch*/
@@ -29,7 +30,7 @@ public:
     const int lowerLimitPin;
     int calibratedUpperLim;
     int calibratedLowerLim;
-    int positionBias;
+    int thetaBias;
 
     /*Attributes Relating to Motor*/
     const int dirPin; // M1 Pin
@@ -46,18 +47,22 @@ public:
     
 
     /*Kinematic Variables*/
-    const double rh = .050;          // [millimeters] length of lever arm (this is currently wrong and needs to be updated)
+    const double rh = 0.0154;          // [meters] moment arm from tendon to joint center 0.0154
     volatile double xh = 0;          // x position of handle
+    volatile double thetaE = 0;      // angular position of handle (radians)
     volatile double lastXh = 0;      // last x position of the handle
+    volatile double lastThetaE = 0;  // last angular position of the handle (radians)
     volatile double vh = 0;          // velocity of the handle
+    volatile double omegaE = 0;      // angular velocity of the handle (radians/s)
     volatile double lastVh = 0;      // last velocity of the handle
+    volatile double lastOmegaE = 0;  // last angular velocity of the handle (radians/s)
     volatile double lastLastVh = 0;  // last last velocity of the handle
+    volatile double lastLastOmegaE = 0; // last last angular velocity of the handle (radians/s)
     volatile double Tm = 0;          // torque
     volatile double tempTm = 0;       // temp torque value for nonlinear spring calcs
 
     /*Haptic Variables*/
     volatile double forceP = 0;
-    volatile double tempforceP = 0;   // temp force value for nonlinear spring calcs
     volatile double forceD = 0;
     volatile double duty = 0;
     volatile double torqueOutput = 0;

@@ -113,7 +113,7 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
 //       delay(10);
 //     }
 
-//   motor::positionBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
+//   motor::thetaBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
 
 //   delay(5000);
 //   /*
@@ -142,8 +142,8 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
 // }
 
 void motor::calcPosition() {
-  motor::position = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-  // motor::truePosition = motor::position - motor::positionBias;
+  motor::theta = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution)); // angular position of motor in degrees
+  // motor::truePosition = motor::theta - motor::thetaBias;
 }
 
 void motor::encoderAPulse() {
@@ -211,11 +211,11 @@ bool motor::coupleBool = 0;
 
 void motor::calcTorqueOutput(){
   // initialize limits
-  int upperLimit = motor::upperLim;
-  int lowerLimit = motor::lowerLim;
+  int upperLimit = motor::upperLim; // end ROM in positive direction (degrees)
+  int lowerLimit = motor::lowerLim; // end ROM in negative direction (degrees)
 
   // check for coupling on separateJ
-  // if (motor::motorID == 2 && abs(motor::position) > 10){
+  // if (motor::motorID == 2 && abs(motor::theta) > 10){
   //   motor::coupleBool = 1;
   // }
   // else if (motor::motorID == 2){
@@ -233,27 +233,30 @@ void motor::calcTorqueOutput(){
   // }
 
   // calculate handle position
-  if (motor::position < lowerLimit){
-    motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
+  if (motor::theta < lowerLimit){
+    // motor::xh = rh*(motor::position - lowerLimit)*(3.14/180);
+    motor::thetaE = (motor::theta - lowerLimit)*(3.14/180);  // angle error in radians
     // Serial.print("position in left end ROM");
   }
-  else if (motor::position > upperLimit){
-    motor::xh = rh*(motor::position - upperLimit)*(3.14/180);
+  else if (motor::theta > upperLimit){
+    // motor::xh = rh*(motor::theta - upperLimit)*(3.14/180);
+    motor::thetaE = (motor::theta - upperLimit)*(3.14/180);  // angle error in radians 
     // Serial.print("position in right end ROM");
   }
   else{
-    motor::xh = 0;
+    // motor::xh = 0;
+    motor::thetaE = 0;
     // return; // break function if in free ROM to save computational time
   }
 
   // Position Limit
-  // if (motor::position > 90){
+  // if (motor::theta > 90){
   //   digitalWrite(LED_BUILTIN, HIGH);
   //   while (true){
   //     analogWrite(motor::pwmPin, 0);
   //   }
   // }
-  // else if (motor::position < -90){
+  // else if (motor::theta < -90){
   //   digitalWrite(LED_BUILTIN, HIGH);
   //   while (true){
   //     analogWrite(motor::pwmPin, 0);
@@ -262,33 +265,45 @@ void motor::calcTorqueOutput(){
 
   // Compute handle velocity -> filtered velocity (2nd-order filter)
 
-  motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 
-  motor::lastXh = motor::xh;
-  motor::lastLastVh = motor::lastVh;
-  motor::lastVh = motor::vh;
+  // motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 
+  motor::omegaE = rh*(-(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001);
+  // motor::lastXh = motor::xh;
+  motor::lastThetaE = motor::thetaE;
+  // motor::lastLastVh = motor::lastVh;
+  motor::lastLastOmegaE = motor::lastOmegaE;
+  // motor::lastVh = motor::vh;
+  motor::lastOmegaE = motor::omegaE;
 
   // Velocity Limit
-  if (motor::vh > 5){
-    digitalWrite(LED_BUILTIN, HIGH);
-    while (true){
-      analogWrite(motor::pwmPin, 0);
-    }
-  }
+  // if (motor::vh > 5){
+  //   digitalWrite(LED_BUILTIN, HIGH);
+  //   while (true){
+  //     analogWrite(motor::pwmPin, 0);
+  //   }
+  // }
 
 
   // Render a virtual spring (linear spring)
-  motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
+  // motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
+  motor::forceP = -motor::kSpring*(rh*motor::thetaE);  // Resistive spring force [Newtons], kSpring = [N/m]
+  
+  // REPLACE WITH NEW EQUATION FROM CALVIN
+  // Kp = 36*pow(motor::xh*1000, 2) + 58.2*(motor::xh*1000) - 15.3;
+  // Kp = 36*pow(rh*motor::thetaE*1000, 2) + 58.2*(rh*motor::thetaE*1000) - 15.3; // Non-linear spring equation [N/mm]
+  Kp = 0.036*pow(rh*motor::thetaE, 2) + 0.058*(rh*motor::thetaE) - 0.015; // SCALED Non-linear spring equation [N/mm]
+  
   
   // Render a virtual spring (non-linear spring)
-  // Kp = (36*pow((motor::xh-0.80833),2) + 58.2*(motor::xh-0.80833) - 15.3) + 38.8225; 
-  // Kp = 36*pow(motor::xh*1000, 2) + 58.2*(motor::xh*1000) - 15.3;
-  // motor::forceP = -scalingFactor*Kp*(motor::xh*1000); // Resistive spring force
+  // motor::forceP = -scalingFactor*Kp*(motor::xh*1000); // Resistive spring force [N]
+  // motor::forceP = -scalingFactor*Kp*(rh*motor::thetaE*1000); // Resistive spring force [N]
+
   
   // Render a damper
-  motor::forceD = -motor::bDamper*motor::vh;
+  // motor::forceD = -motor::bDamper*motor::vh;
+  motor::forceD = -motor::bDamper*motor::omegaE;
 
   // Calculate motor torque needed to produce desired resistive force 
-  motor::Tm = rh*(motor::forceP - motor::forceD);    
+  motor::Tm = rh*(motor::forceP - motor::forceD); // Resistive TORQUE [N*m]   
 
   // Compute the duty cycle required to generate Tp (torque at the motor pulley)
   motor::duty = sqrt(abs(motor::Tm)/0.03);
@@ -304,12 +319,12 @@ void motor::calcTorqueOutput(){
   motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
-  if(motor::forceP < 0) {
-    digitalWrite(motor::dirPin, HIGH);
-    analogWrite(motor::pwmPin, motor::torqueOutput);
-  } 
-  else{
-    digitalWrite(motor::dirPin, LOW);
-    analogWrite(motor::pwmPin, motor::torqueOutput);
-  }
+  // if(motor::forceP < 0) {
+  //   digitalWrite(motor::dirPin, HIGH);
+  //   analogWrite(motor::pwmPin, motor::torqueOutput);
+  // }   
+  // else{
+  //   digitalWrite(motor::dirPin, LOW);
+  //   analogWrite(motor::pwmPin, motor::torqueOutput);
+  // }
 }
