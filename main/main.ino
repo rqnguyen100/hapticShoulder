@@ -28,7 +28,7 @@ const long interval = 100;          // Interval at which to send data (15 ms)
 // motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
 // motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
-motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 91); 
+motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 305); 
 
 void setup() {
     // Begin serial monitor
@@ -67,7 +67,7 @@ void setup() {
     Serial.print(", ");
     Serial.print("True Angle");
     Serial.print(", ");
-    Serial.print("Calculated Torque");
+    Serial.print("Calculated Torque (Nm)");
     Serial.print(", ");
     Serial.println("Torque PWM");
     
