@@ -42,8 +42,6 @@ public:
     const int upperLim;
     const int lowerLim;
     volatile double Kp;              // non-linear stiffness equation
-    const double scalingFactor = 0.000001;          // scaling factor to scale down coefficients of non-linear tendon stiffness eqn 
-
     
 
     /*Kinematic Variables*/

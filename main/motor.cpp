@@ -294,8 +294,9 @@ void motor::calcTorqueOutput(){
   
   
   // Render a virtual spring (non-linear spring)
-  // motor::forceP = -scalingFactor*Kp*(motor::xh*1000); // Resistive spring force [N]
-  // motor::forceP = -scalingFactor*Kp*(rh*motor::thetaE*1000); // Resistive spring force [N]
+  // motor::forceP = -Kp*(motor::xh*1000); // Resistive spring force [N]
+  // motor::forceP = -Kp*(rh*motor::thetaE*1000); // Resistive spring force [N] 
+  // To compensate for Kp having units N/mm and rh being in m, rh*motor::thetaE is multiplied by a 1000 to result in N force
 
   
   // Render a damper
