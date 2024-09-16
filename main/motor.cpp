@@ -215,22 +215,22 @@ void motor::calcTorqueOutput(){
   int lowerLimit = motor::lowerLim; // end ROM in negative direction (degrees)
 
   // check for coupling on separateJ
-  // if (motor::motorID == 2 && abs(motor::theta) > 10){
-  //   motor::coupleBool = 1;
-  // }
-  // else if (motor::motorID == 2){
-  //   motor::coupleBool = 0;
-  // }
+  if (motor::motorID == 2 && abs(motor::theta) >= 85){
+    motor::coupleBool = 1;
+  }
+  else if (motor::motorID == 2){
+    motor::coupleBool = 0;
+  }
 
-  // // perform coupling on motor 3
-  // if (motor::motorID == 3 && motor::coupleBool){
-  //   upperLimit = 360;
-  //   lowerLimit = -360;
-  // }
-  // else if (motor::motorID == 3){
-  //   upperLimit = 10;
-  //   lowerLimit = -20;
-  // }
+  // perform coupling on motor 3
+  if (motor::motorID == 3 && motor::coupleBool){
+    upperLimit = 165;
+    lowerLimit = -15;
+  }
+  else if (motor::motorID == 3){
+    upperLimit = 90;
+    lowerLimit = -15;
+  }
 
   // calculate handle position
   if (motor::theta < lowerLimit){

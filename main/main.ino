@@ -1,7 +1,9 @@
 #include "motor.h"
 
-unsigned long previousMillis = 0;  // Store the last time the data was sent
-const long interval = 100;          // Interval at which to send data (15 ms)
+// unsigned long previousMillis = 0;  // Store the last time the data was sent
+// const long interval = 100;          // Interval at which to send data (15 ms)
+
+unsigned long timestamp;
 
 /*
   intialize motor class with inputs
@@ -24,11 +26,16 @@ const long interval = 100;          // Interval at which to send data (15 ms)
       - damper ratio (default = 0.35)
 */
 
+// coupling experiment 
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  90, -15, 10); // small baske1
+motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
+
 // motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11, 20, -20); // big basket
 // motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8, 20, -20); // small baske1
 // motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
-motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 305); 
+// haptics experiment 
+// motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 305); 
 
 void setup() {
     // Begin serial monitor
@@ -58,22 +65,32 @@ void setup() {
 
     // Initialize Pins 
     // mujBig.begin(mujBig.aPin, mujBig.bPin, mujBig.invAPin, mujBig.invBPin, mujBig.upperLimitPin, mujBig.lowerLimitPin, mujBig.pwmPin, mujBig.dirPin);
-    // separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
-    // mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
+    separJ.begin(separJ.aPin, separJ.bPin, separJ.invAPin, separJ.invBPin, separJ.upperLimitPin, separJ.lowerLimitPin, separJ.pwmPin, separJ.dirPin);
+    mujSmall.begin(mujSmall.aPin, mujSmall.bPin, mujSmall.invAPin, mujSmall.invBPin, mujSmall.upperLimitPin, mujSmall.lowerLimitPin, mujSmall.pwmPin, mujSmall.dirPin);
 
-    oneDOF.begin(oneDOF.aPin, oneDOF.bPin, oneDOF.invAPin, oneDOF.invBPin, oneDOF.upperLimitPin, oneDOF.lowerLimitPin, oneDOF.pwmPin, oneDOF.dirPin);
+    // oneDOF.begin(oneDOF.aPin, oneDOF.bPin, oneDOF.invAPin, oneDOF.invBPin, oneDOF.upperLimitPin, oneDOF.lowerLimitPin, oneDOF.pwmPin, oneDOF.dirPin);
 
-    Serial.print("Time since startup (ms)");
+
+    // Coupling experiment data collection
+    Serial.print("Humeral Angle (deg)");
     Serial.print(", ");
-    Serial.print("True Angle");
+    Serial.print("Abduction Angle (deg)");
     Serial.print(", ");
-    Serial.print("Calculated Torque (Nm)");
+    Serial.print("PWM Torque");
     Serial.print(", ");
-    Serial.println("Torque PWM");
+    Serial.println("Elapsed Time (ms)");
+
+
+    // Haptics experiment data collection
+    // Serial.print("Time since startup (ms)");
+    // Serial.print(", ");
+    // Serial.print("True Angle");
+    // Serial.print(", ");
+    // Serial.print("Calculated Torque (Nm)");
+    // Serial.print(", ");
+    // Serial.println("Torque PWM");
     
-    
-
-
+  
     // Calibrate Position
     // mujBig.calibratePosition();
 }
@@ -81,38 +98,44 @@ void setup() {
 void loop() {
     // Position Output
     // mujBig.calcPosition();
-    // separJ.calcPosition();
-    // mujSmall.calcPosition();
+    separJ.calcPosition();
+    mujSmall.calcPosition();
 
-    oneDOF.calcPosition();
+    // oneDOF.calcPosition();
 
     // Haptic Feedback
     // mujBig.calcTorqueOutput();
-    // separJ.calcTorqueOutput();
-    // mujSmall.calcTorqueOutput();
+    separJ.calcTorqueOutput();
+    mujSmall.calcTorqueOutput();
 
-    oneDOF.calcTorqueOutput();
+    // oneDOF.calcTorqueOutput();
 
-    // Position Logging
-    unsigned long currentMillis = millis();  // Get the current time
+    // Haptics Experiment Position Logging
+    // unsigned long currentMillis = millis();  // Get the current time
 
-    if (currentMillis - previousMillis >= interval){
-      // Save the last time data was sent
-      previousMillis = currentMillis;
+    // if (currentMillis - previousMillis >= interval){
+    //   // Save the last time data was sent
+    //   previousMillis = currentMillis;
 
-      Serial.print(currentMillis);
-      Serial.print(", ");
-      Serial.print(oneDOF.theta);
-      Serial.print(", ");
-      Serial.print(oneDOF.Tm, 5);
-      Serial.print(", ");
-      Serial.println(oneDOF.torqueOutput);  
-    }
-   
+    //   Serial.print(currentMillis);
+    //   Serial.print(", ");
+    //   Serial.print(oneDOF.theta);
+    //   Serial.print(", ");
+    //   Serial.print(oneDOF.Tm, 5);
+    //   Serial.print(", ");
+    //   Serial.println(oneDOF.torqueOutput);  
+    // }
+
+    timestamp = millis();
 
 
+    Serial.print(separJ.theta);
+    Serial.print(", ");
+    Serial.print(mujSmall.theta);
+    Serial.print(", ");
+    Serial.print(mujSmall.torqueOutput);
+    Serial.print(", ");
+    Serial.println(timestamp);   
 
-    
-
-    // delay(50);
+    delay(50);
 }
