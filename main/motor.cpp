@@ -215,7 +215,7 @@ void motor::calcTorqueOutput(){
   int lowerLimit = motor::lowerLim;
 
   // check for coupling on separateJ
-  if (motor::motorID == 2 && abs(motor::position) >= 150){  // CHANGE 90 TO MINIMUM DESIRED HUMERAL ROTATION TO UNLOCK LARGER ROM
+  if (motor::motorID == 2 && abs(motor::position) <= -50){  // CHANGE 90 TO MINIMUM DESIRED HUMERAL ROTATION TO UNLOCK LARGER ROM
     motor::coupleBool = 1;
   }
   else if (motor::motorID == 2){
@@ -224,11 +224,11 @@ void motor::calcTorqueOutput(){
 
   // perform coupling on motor 3
   if (motor::motorID == 3 && motor::coupleBool){
-    upperLimit = 165; // CHANGE TO DESIRED NEW UPPER LIMIT IF HUMERAL JOINT IS ROTATED 
+    upperLimit = 90; // CHANGE TO DESIRED NEW UPPER LIMIT IF HUMERAL JOINT IS ROTATED 
     lowerLimit = -15;
   }
   else if (motor::motorID == 3){
-    upperLimit = 90; // LIMITS REMAIN UNCHANGED IF HUMERAL JOINT IS NOT ROTATED (NO COUPLING)
+    upperLimit = 135; // LIMITS REMAIN UNCHANGED IF HUMERAL JOINT IS NOT ROTATED (NO COUPLING)
     lowerLimit = -15;
   }
 

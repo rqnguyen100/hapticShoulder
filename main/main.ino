@@ -24,7 +24,7 @@ unsigned long timestamp;
 */
 
 // motor mujBig(  1, 10./3,  2,  4,  5,  6, 0, 0, 12, 11,  7, -187); // big basket
-motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  90, -15, 10); // small baske1
+motor mujSmall(3, 10./3, 19, 20, 21, 22, 0, 0,  9,  8,  135, -15, 10); // small baske1
 motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
 void setup() {
