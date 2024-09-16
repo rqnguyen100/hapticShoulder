@@ -266,7 +266,7 @@ void motor::calcTorqueOutput(){
   // Compute handle velocity -> filtered velocity (2nd-order filter)
 
   // motor::vh = -(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001; 
-  motor::omegaE = rh*(-(.95*.95)*motor::lastLastVh + 2*.95*motor::lastVh + (1-.95)*(1-.95)*(motor::xh-motor::lastXh)/.0001);
+  motor::omegaE = rh*(-(.95*.95)*motor::lastLastOmegaE + 2*.95*motor::lastOmegaE + (1-.95)*(1-.95)*(rh*motor::thetaE-motor::lastThetaE)/.0001);
   // motor::lastXh = motor::xh;
   motor::lastThetaE = motor::thetaE;
   // motor::lastLastVh = motor::lastVh;
@@ -285,18 +285,25 @@ void motor::calcTorqueOutput(){
 
   // Render a virtual spring (linear spring)
   // motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force
-  motor::forceP = -motor::kSpring*(rh*motor::thetaE);  // Resistive spring force [Newtons], kSpring = [N/m]
+  // motor::forceP = -motor::kSpring*(rh*motor::thetaE);  // Resistive spring force [Newtons], kSpring = [N/m]
   
   // REPLACE WITH NEW EQUATION FROM CALVIN
   // Kp = 36*pow(motor::xh*1000, 2) + 58.2*(motor::xh*1000) - 15.3;
   // Kp = 36*pow(rh*motor::thetaE*1000, 2) + 58.2*(rh*motor::thetaE*1000) - 15.3; // Non-linear spring equation [N/mm]
-  Kp = 0.036*pow(rh*motor::thetaE, 2) + 0.058*(rh*motor::thetaE) - 0.015; // SCALED Non-linear spring equation [N/mm]
-  
+  // Kp = 0.036*pow(rh*motor::thetaE, 2) + 0.058*(rh*motor::thetaE) - 0.015; // SCALED Non-linear spring equation [N/mm]
+  Kp = 0.12*pow((rh*1000)*motor::thetaE, 2) + 0.194*((rh*1000)*motor::thetaE) - 0.051;
+
   
   // Render a virtual spring (non-linear spring)
   // motor::forceP = -Kp*(motor::xh*1000); // Resistive spring force [N]
-  // motor::forceP = -Kp*(rh*motor::thetaE*1000); // Resistive spring force [N] 
-  // To compensate for Kp having units N/mm and rh being in m, rh*motor::thetaE is multiplied by a 1000 to result in N force
+  // motor::forceP = -Kp*((rh*1000)*motor::thetaE); // Resistive spring force [N] 
+  // To compensate for Kp having units N/mm and rh being in m, rh is multiplied by 1000
+  if (motor::thetaE > 0) {
+    motor::forceP = -(0.04*pow(rh*1000*motor::thetaE, 3) + 0.097*pow(rh*1000*motor::thetaE, 2) - 0.051*(rh*1000*motor::thetaE) + 0.0054);
+  }
+  else{
+    motor::forceP = 0;
+  }
 
   
   // Render a damper
@@ -307,8 +314,8 @@ void motor::calcTorqueOutput(){
   motor::Tm = rh*(motor::forceP - motor::forceD); // Resistive TORQUE [N*m]   
 
   // Compute the duty cycle required to generate Tp (torque at the motor pulley)
-  motor::duty = sqrt(abs(motor::Tm)/0.03);
-  
+  motor::duty = sqrt(abs(motor::Tm)/0.0566);
+
   // Make sure the duty cycle is between 0 and 100%
   if (motor::duty > 1) {            
     motor::duty = 1;

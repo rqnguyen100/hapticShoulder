@@ -58,6 +58,7 @@ public:
     volatile double lastLastOmegaE = 0; // last last angular velocity of the handle (radians/s)
     volatile double Tm = 0;          // torque
     volatile double tempTm = 0;       // temp torque value for nonlinear spring calcs
+    unsigned long lastTime = 0;
 
     /*Haptic Variables*/
     volatile double forceP = 0;
