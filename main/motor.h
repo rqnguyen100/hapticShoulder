@@ -21,15 +21,14 @@ public:
     volatile bool reconstructedA;
     volatile bool reconstructedB;
     volatile double encoderCount;
-    volatile double position;
-    volatile double truePosition;
+    volatile double position;     // DELETE
+    volatile double theta;
 
     /*Attributes Relating to Limit Switch*/
     const int upperLimitPin;
     const int lowerLimitPin;
     int calibratedUpperLim;
     int calibratedLowerLim;
-    int positionBias;
 
     /*Attributes Relating to Motor*/
     const int dirPin; // M1 Pin
@@ -41,16 +40,24 @@ public:
     const int upperLim;
     const int lowerLim;
     volatile double Kp;         // non-linear stiffness equation 
-    const double scalingFactor = 0.000001;    // scaling factor to scale down coefficients of non-linear tendon stiffness eqn 
-
 
     /*Kinematic Variables*/
-    const double rh = 0.05;          // [meters] length of lever arm (this is currently wrong and needs to be updated)
+    const double rh = 0.0154;        // [meters] moment arm from joint center to force line of action
+    
+    // Translational space
     volatile double xh = 0;          // x position of handle
     volatile double lastXh = 0;      // last x position of the handle
     volatile double vh = 0;          // velocity of the handle
     volatile double lastVh = 0;      // last velocity of the handle
     volatile double lastLastVh = 0;  // last last velocity of the handle
+    
+    // Rotational space
+    volatile double thetaE = 0;      // [radians] error angle position (angle over which tendon is stretched in end ROM) 
+    volatile double lastThetaE = 0;  // last error angle position
+    volatile double omegaE = 0;      // angular velocity of the handle (radians/s)
+    volatile double lastOmegaE = 0;  // last angular velocity of the handle (radians/s)
+    volatile double lastLastOmegaE = 0; // last last angular velocity of the handle (radians/s)
+
     volatile double Tm = 0;          // torque
 
     /*Haptic Variables*/
@@ -61,6 +68,8 @@ public:
 
     /*Coupling Variables*/
     static bool coupleBool;
+    static bool medialBool; 
+    static bool externalBool; 
 
     /*Instance Handler*/
     static motor * instances [3];

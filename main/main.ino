@@ -32,13 +32,14 @@ void setup() {
     Serial.begin(9600);
 
     // Print Headers
-    // Serial.print("MUJ big basket position (deg)");
-    // Serial.print(", ");
-    // Serial.print("MUJ small basket position (deg)");
-    // Serial.print(", ");
-    // Serial.print("Separate joint position (deg)");
-    // Serial.print(", ");
-    // Serial.println("Time after start-up (ms)");
+    Serial.print("Humeral Angle (deg)");
+    Serial.print(", ");
+    Serial.print("Abduction Angle (deg)");
+    Serial.print(", ");
+    Serial.print("PWM Torque");
+    Serial.print(", ");
+    Serial.println("Elapsed Time (ms)");
+
 
     // Velocity LED
     pinMode(LED_BUILTIN, OUTPUT);
@@ -66,18 +67,6 @@ void setup() {
 
 
 
-    Serial.print("Humeral Angle (deg)");
-    Serial.print(", ");
-    Serial.print("Abduction Angle (deg)");
-    Serial.print(", ");
-    Serial.print("PWM Torque");
-    Serial.print(", ");
-    // Serial.print("Spring Force");
-    // Serial.print(", ");
-    // Serial.print("Damping Force");
-    // Serial.print(", ");
-    Serial.println("Elapsed Time (ms)");
-
 }
 
 void loop() {
@@ -95,16 +84,12 @@ void loop() {
     timestamp = millis();
 
 
-    Serial.print(separJ.position);
+    Serial.print(separJ.theta);
     Serial.print(", ");
-    Serial.print(mujSmall.position);
+    Serial.print(mujSmall.theta);
     Serial.print(", ");
     Serial.print(mujSmall.torqueOutput);
     Serial.print(", ");
-    // Serial.print(mujSmall.forceP);
-    // Serial.print(", ");
-    // Serial.print(mujSmall.forceD);
-    // Serial.print(", ");
     Serial.println(timestamp);
   
 
