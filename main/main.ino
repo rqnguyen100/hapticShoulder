@@ -30,7 +30,7 @@ const long interval = 100;          // Interval at which to send data (15 ms)
 // motor separJ(  2,     1, 18, 17, 16, 15, 0, 0, 32, 33, 20, -20); // humeral
 
 // haptics experiment 
-motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 10, -10, 371); 
+motor oneDOF(  1,     1, 18, 17, 16, 15, 0, 0,  9,  8, 1, -1, 175); 
 
 void setup() {
     // Begin serial monitor

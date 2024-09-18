@@ -21,8 +21,9 @@ public:
     volatile bool reconstructedA;
     volatile bool reconstructedB;
     volatile double encoderCount;
-    volatile double position;   // old variable for angular position in degrees 
+    volatile double lastEncoderCount;
     volatile double theta;      // new variable for angular position in degrees
+    volatile double angularVelocity;
     volatile double truePosition;
 
     /*Attributes Relating to Limit Switch*/
@@ -89,6 +90,7 @@ public:
     void encoderBPulse();
 
     void calcPosition();
+    void calcAngularVelocity();
     void calibratePosition();
     void calcTorqueOutput();
 
