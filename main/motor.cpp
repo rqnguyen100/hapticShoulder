@@ -216,11 +216,11 @@ void motor::calcTorqueOutput(){
   int lowerLimit = motor::lowerLim;
 
   // check for coupling on separateJ
-  if (motor::motorID == 2 && motor::theta <= -50){  // CHANGE 90 TO MINIMUM DESIRED HUMERAL ROTATION TO UNLOCK LARGER ROM
+  if (motor::motorID == 2 && motor::theta <= -40){  // CHANGE 90 TO MINIMUM DESIRED HUMERAL ROTATION TO UNLOCK LARGER ROM
     // motor::coupleBool = 1;
     motor::medialBool = 1;
   }
-  else if (motor::motorID == 2 && motor::theta >= 85){
+  else if (motor::motorID == 2 && motor::theta >= 50){
     motor::externalBool = 1;
   }
   else if (motor::motorID == 2){
