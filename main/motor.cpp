@@ -2,8 +2,8 @@
 #include "motor.h"
 
 // Constructor for motor_instance
-motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
-    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), upperLimitPin(upperLimitPin), lowerLimitPin(lowerLimitPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
+motor::motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35)
+    : motorID(motorID), gearRatio(gearRatio), aPin(aPin), bPin(bPin), invAPin(invAPin), invBPin(invBPin), pwmPin(pwmPin), dirPin(dirPin), upperLim(upperLim), lowerLim(lowerLim), kSpring(kSpring), bDamper(bDamper) {
 }
 
 motor* motor::instances[3] = {NULL, NULL, NULL};
@@ -44,14 +44,11 @@ void motor::encoderBPulseExt2(){
   }
 }
 
-void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dirPin){
+void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte pwmPin, const byte dirPin){
   pinMode(aPin, INPUT);
   pinMode(bPin, INPUT);
   pinMode(invAPin, INPUT);
   pinMode(invBPin, INPUT);
-
-  //pinMode(upperLimitPin, INPUT);
-  //pinMode(lowerLimitPin, INPUT);
 
   pinMode(pwmPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
@@ -82,64 +79,6 @@ void motor::begin(const byte aPin, const byte bPin, const byte invAPin, const by
 
   }
 } 
-
-// void motor::calibratePosition(){
-//     bool upperSet = 1;
-//     bool lowerSet = 1;
-
-//     while (upperSet){
-//       if (digitalRead(motor::upperLimitPin)) {
-//         upperSet = 0;
-//         motor::calibratedUpperLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-//         //Serial.println("Calibrated Upper Limit");
-//         }
-//       else {
-//         //Serial.println("Move arm to upper limit switch...");
-//         }
-
-//       delay(10);
-//     }
-
-//     while (lowerSet){
-//       if (digitalRead(motor::lowerLimitPin)) {
-//         lowerSet = 0;
-//         motor::calibratedLowerLim = (motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
-//         //Serial.println("Calibrated Lower Limit");
-//         }
-//       else{
-//         //Serial.println("Move arm to lower limit switch...");
-//         }
-
-//       delay(10);
-//     }
-
-//   // motor::thetaBias = (motor::calibratedUpperLim + motor::calibratedLowerLim) / 2;
-
-//   delay(5000);
-//   /*
-//   while (true) {
-//     Serial.println("Return arm to free range and press enter...");
-//     delay(100);
-
-//     if (Serial.available() > 0) {
-//       char c = Serial.read();
-
-//       // Check if the received character is newline (Enter key)
-//       if (c == '\n') {
-//         Serial.println("Enter pressed. Loading program...");
-//         Serial.print("[");
-//         for (int i = 0; i < 10; i++) {
-//           Serial.print("█");
-//           delay(250);
-//           }
-//         Serial.println("]");
-//         delay(1000);
-//         break;
-//       }
-//     }
-//   }
-//   */
-// }
 
 void motor::calcPosition() {
   motor::theta = (double)(motor::encoderCount / motor::gearRatio) * (360. / (CPR * resolution));
@@ -206,7 +145,6 @@ void motor::encoderBPulse(){
 }
 
 /* ====================================================================== */
-bool motor::coupleBool = 0;
 bool motor::medialBool = 0;
 bool motor::externalBool = 0;
 
@@ -217,7 +155,6 @@ void motor::calcTorqueOutput(){
 
   // check for coupling on separateJ
   if (motor::motorID == 2 && motor::theta <= -40){  // CHANGE 90 TO MINIMUM DESIRED HUMERAL ROTATION TO UNLOCK LARGER ROM
-    // motor::coupleBool = 1;
     motor::medialBool = 1;
   }
   else if (motor::motorID == 2 && motor::theta >= 50){
@@ -295,8 +232,8 @@ void motor::calcTorqueOutput(){
   // motor::forceP = -motor::kSpring*motor::xh; // Resistive spring force [N]
 
   // Render a virtual spring (non-linear spring)
-  Kp = 0.25*(0.12*pow((rh*1000)*motor::thetaE, 2) + 0.194*((rh*1000)*motor::thetaE) - 0.051); // [N/mm]
-  motor::forceP = -Kp*((rh*1000)*motor::thetaE); // Resistive spring force [N] 
+  kSpring_nL = 0.25*(0.12*pow((rh*1000)*motor::thetaE, 2) + 0.194*((rh*1000)*motor::thetaE) - 0.051); // [N/mm]
+  motor::forceP = -kSpring_nL*((rh*1000)*motor::thetaE); // Resistive spring force [N] 
 
   // Render a damper
   // motor::forceD = -motor::bDamper*motor::vh; // translational space
@@ -316,7 +253,7 @@ void motor::calcTorqueOutput(){
     motor::duty = 0;
   }   
 
-  motor::torqueOutput = (int)(motor::duty*tarunFactor);   // convert duty cycle to output signal
+  motor::torqueOutput = (int)(motor::duty*pwmFactor);   // convert duty cycle to output signal
 
   // Check direction to oppose force
   if(motor::forceP < 0) {

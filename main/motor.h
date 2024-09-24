@@ -24,12 +24,6 @@ public:
     volatile double position;     // DELETE
     volatile double theta;
 
-    /*Attributes Relating to Limit Switch*/
-    const int upperLimitPin;
-    const int lowerLimitPin;
-    int calibratedUpperLim;
-    int calibratedLowerLim;
-
     /*Attributes Relating to Motor*/
     const int dirPin; // M1 Pin
     const int pwmPin; // E1 Pin
@@ -39,11 +33,11 @@ public:
     const int bDamper;
     const int upperLim;
     const int lowerLim;
-    volatile double Kp;         // non-linear stiffness equation 
+    volatile double kSpring_nL;      // non-linear spring equation
 
     /*Kinematic Variables*/
     const double rh = 0.0154;        // [meters] moment arm from joint center to force line of action
-    
+
     // Translational space
     volatile double xh = 0;          // x position of handle
     volatile double lastXh = 0;      // last x position of the handle
@@ -67,9 +61,8 @@ public:
     volatile double torqueOutput = 0;
 
     /*Coupling Variables*/
-    static bool coupleBool;
-    static bool medialBool; 
-    static bool externalBool; 
+    static bool medialBool;       // if true, changes joint limits in response to an inward humeral rotation 
+    static bool externalBool;     // if true, changes joint limits in response to an outward humeral rotation
 
     /*Instance Handler*/
     static motor * instances [3];
@@ -82,15 +75,14 @@ public:
 
 public:
     /*Functions*/
-    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int upperLimitPin, int lowerLimitPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
+    motor(int motorID, float gearRatio, int aPin, int bPin, int invAPin, int invBPin, int pwmPin, int dirPin, int upperLim, int lowerLim, int kSpring = 10, int bDamper = 0.35);
 
-    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte upperLimitPin, const byte lowerLimitPin, const byte pwmPin, const byte dirPin);
+    void begin(const byte aPin, const byte bPin, const byte invAPin, const byte invBPin, const byte pwmPin, const byte dirPin);
 
     void encoderAPulse();
     void encoderBPulse();
 
     void calcPosition();
-    void calibratePosition();
     void calcTorqueOutput();
 
 private:
@@ -105,7 +97,7 @@ private:
     const float resolution = 2; // dependent on number of interrupt pins used
 
     /*Motor Output*/
-    const int tarunFactor = 175;
+    const int pwmFactor = 255;
 };
 
 #endif
